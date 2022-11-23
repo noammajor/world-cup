@@ -8,9 +8,12 @@ struct Node
     T data;
     int height;
 };
+
+
 template<class T>
-class AVL_Tree {
-    Node<T> *root;
+class AVL_Tree
+ {
+    Node<T>*  root;
 public:
     AVL_Tree()
     {
@@ -181,6 +184,29 @@ public:
         }
         return nullptr;
     }
+
+     bool isLeaf (const Node<T>* node)
+     {
+         if (node->son_larger == nullptr && node->son_smaller == nullptr)
+             return true;
+         return false;
+     }
+
+     void rotate_LL (Node<T>* node)
+     {
+         //Node<T>* temp = node;
+         if(node->father > node)
+             node->father->son_smaller = node->son_smaller;
+         else
+             node->father->son_larger = node->son_smaller;
+         node->son_smaller = node->son_smaller->son_larger; //B->Ar
+         node->son_smaller->son_larger = node; //A->B
+
+     }
+
+
+
+
 
     Node<T>* rotaterr(Node<T>* t)
     {
