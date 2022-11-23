@@ -6,13 +6,14 @@ struct Node
     Node<T>* son_smaller;
     Node<T>* son_larger;
     T data;
-    int balance_factor;
+    int height;
 };
 template<class T>
 class AVL_Tree {
     Node<T> *root;
 public:
-    AVL_Tree() {
+    AVL_Tree()
+    {
         root = nullptr;
     }
 
@@ -23,24 +24,14 @@ public:
     ~AVL_Tree(); //do after
     int add(const T &data) {
 
-        Node<T> *base = new(Node<T>);
-        try {
-            Node<T> *base = new(Node<T>);
-            base->data = data;
-            if (base == nullptr) {
-                throw;
-            }
-        }
-        catch (const std::bad_alloc &e) {
-            throw;
-        }
         root->son_smaller = nullptr;
         root->son_larger = nullptr;
         if (root == nullptr) {
             root = base;
             root->father = nullptr;
-            root->balance_factor = 0;
-        } else {
+            root->height = 0;
+        } else
+        {
             Node<T> *t = root;
             while (t != nullptr) {
                 if (t->data == data) {
@@ -49,20 +40,51 @@ public:
                 if (t->data < data) {
                     t = t->son_larger;
                 }
-                if (t->data > data) {
+                if (t->data > data)
+                {
                     t = t->son_smaller;
                 }
             }
             t = t->father;
-            if (t->data < data) {
+            if (t->data < data)
+            {
                 t->son_larger = base;
                 t->son_larger->father = t;
-            } else {
+            }
+            else
+            {
                 t->son_smaller = base;
                 t->son_smaller->father = t;
             }
+            height(t);
             balancefactor(t);
             return 1;
+        }
+    }//not to use
+    int height(Node<T> *t)
+    {
+        if(t->son_smaller!= nullptr && t->son_larger!= nullptr)
+        {
+            if(t->son_smaller->height>t->son_larger->height)
+            {
+                return t->son_smaller->height+1 ;
+            }
+            else
+            {
+                return t->son_larger->height+1;
+            }
+        }
+        if (t->son_smaller== nullptr && t->son_larger!= nullptr)
+        {
+            return t->son_larger->height+1;
+        }
+        if (t->son_smaller!= nullptr && t->son_larger== nullptr)
+        {
+            return t->son_smaller->height+1;
+        }
+        if(t->son_smaller== nullptr && t->son_larger== nullptr)
+        {
+            return 0;
         }
     }
 
@@ -81,31 +103,61 @@ public:
             right = right->son_larger;
         }
         t->balance_factor = counterleft - counterright;
-        while ((t->balance_factor > 1 || t->balance_factor < -1))
+        while ((t->balance_factor == 1 || t->balance_factor == -1))
         {
             if(t->father== nullptr)
             {
                 break;
             }
-            t = t->father;
-            t->balance_factor = t->son_smaller->balance_factor - t->son_larger->balance_factor;
+            if (t->father->son_smaller==t)
+            {
+                t->father->balance_factor= t->father->balance_factor+1;
+            }
+            if (t->father->son_larger==t)
+            {
+                t->father->balance_factor= t->father->balance_factor-1;
+            }
+            t=t->father;
+        }
+        if (t->balance_factor>1 || t->balance_factor<-1)
+        {
+            if(t->balance_factor>1 && t->son_smaller->balance_factor<0)
+            {
+                rotatelr(t);
+            }
+            if(t->balance_factor>1 && t->son_smaller->balance_factor>-1)
+            {
+                rotatell(t);
+            }
+            if(t->balance_factor<-1 && t->son_smaller->balance_factor<1)
+            {
+                rotaterr(t);
+            }
+            if(t->balance_factor<-1 && t->son_smaller->balance_factor>1)
+            {
+                rotaterl(t);
+            }
+            //t->balance_factor=0;
+        }
 
-        }
-        if(t->balance_factor>1 && t->son_smaller->balance_factor<0)
+    }
+    int bf(Node<T> *t)
+    {
+        if(t->son_smaller!= nullptr && t->son_larger!= nullptr)
         {
-            rotatelr(t);
+            return (t->son_smaller->height-t->son_larger->height);
         }
-        if(t->balance_factor>1 && t->son_smaller->balance_factor>-1)
+        if(t->son_smaller!= nullptr && t->son_larger== nullptr)
         {
-            rotatell(t);
+            return t->son_smaller->height;
         }
-        if(t->balance_factor<-1 && t->son_smaller->balance_factor<1)
+        if(t->son_smaller== nullptr && t->son_larger!= nullptr)
         {
-            rotaterr(t);
+            return t->son_larger->height;
         }
-        if(t->balance_factor<-1 && t->son_smaller->balance_factor>1)
+        if(t->son_smaller== nullptr && t->son_larger== nullptr)
         {
-            rotaterl(t);
+            return 0;
         }
     }
 
@@ -130,7 +182,7 @@ public:
         return nullptr;
     }
 
-    void rotaterr(Node<T>* t)
+    Node<T>* rotaterr(Node<T>* t)
     {
         Node<T>* temp=t->son_larger->son_smaller;//forB
         t->son_larger->father=t->father;
@@ -144,9 +196,75 @@ public:
             t->father->son_larger=t->son_larger;
         }
         t->son_larger=temp;
+        return t;
+    }
+    int insert(Node<T>* t,const T &data)
+    {
+        if (t == nullptr)
+        {
+            try {
+                Node<T> *base = new(Node<T>);
+                base->data = data;
+                if (base == nullptr) {
+                    throw;
+                }
+            }
+            catch (const std::bad_alloc &e) {
+                throw;
+            }
+          t=base;
+            t->son_larger= nullptr;
+            t->son_smaller= nullptr;
+        }
+        else
+        {
+            if (t->data < data)
+            {
+                insert(t->son_larger, data);
+                if(t->son_larger->data==data)
+                {
+                    t->son_larger->father=t;
+                }
+            }
+            if (t->data > data)
+            {
+                insert(t->son_smaller, data);
+                if(t->son_smaller->data==data)
+                {
+                    t->son_smaller->father=t;
+                }
+            }
+            t->height = height(t);
+            if (balancefactor(t) == 2 && balancefactor(t->son_smaller) =>0)
+            {
+                t = rotatell(t);
+            }
+            if (balancefactor(t) == 2 && balancefactor(t->son_smaller) < 0) {
+                t = rotatelr(t);
+            }
+            if (balancefactor(t) == -2 && balancefactor(t->son_larger) <= 0) {
+                t = rotaterr(t);
+            }
+            if (balancefactor(t) == -2 && balancefactor(t->son_larger) == 1) {
+                t = rotaterr(t);
+            }
+            return ;
+        }
+    }
+    Node<T>* rotaterl(Node<T>* t)
+    {
+        Node<T> *temp1 = t;
+        Node<T> *temp2 = t->son_larger;
+        Node<T> *temp3 = t->son_larger->son_smaller;
+        temp1->
+
     }
 
-//i do rl
 
-}
-;
+        temp1->son_larger=t->son_larger->son_smaller->son_smaller;
+        t->son_larger->son_smaller->son_smaller=t;
+        temp2->son_smaller=temp2->son_smaller->son_larger;
+
+    }
+
+};
