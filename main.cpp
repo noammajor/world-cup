@@ -140,7 +140,7 @@ public:
             //t->balance_factor=0;
         }
 
-    }
+    }//not in use
     int bf(Node<T> *t)
     {
         if(t->son_smaller!= nullptr && t->son_larger!= nullptr)
@@ -198,7 +198,7 @@ public:
         t->son_larger=temp;
         return t;
     }
-    int insert(Node<T>* t,const T &data)
+    int insert(Node<T>* t,const T& data)
     {
         if (t == nullptr)
         {
@@ -253,10 +253,20 @@ public:
     }
     Node<T>* rotaterl(Node<T>* t)
     {
-        Node<T> *temp1 = t;
-        Node<T> *temp2 = t->son_larger;
-        Node<T> *temp3 = t->son_larger->son_smaller;
-        temp1->
+        Node<T> *temp1 = t;//points to A
+        Node<T> *temp2 = t->son_larger;//points to B
+        Node<T> *temp3 = t->son_larger->son_smaller;//points to C
+        temp1->son_larger=temp3->son_smaller;//right side of A point to left of C
+        temp3->son_smaller->father=temp1;//right side of C points to new father A
+        temp2->son_smaller=temp3->son_larger//left side of B points to right side of C
+        temp3->son_larger->father=temp2;//right side of C points to new father B
+        temp3->son_smaller=temp1;//left side C points to A
+        temp3->son_larger=temp2;//right side C points to B
+        temp1->father=temp3;//Apoints to father C
+        temp3->father=t->father;//C points to A's father (C's father pointer)
+        temp2->father=temp3;//B points to father C
+        return temp3;// return new C to be t.
+
 
     }
 
