@@ -1,4 +1,6 @@
 #include <iostream>
+
+
 template<class T>
 struct Node
 {
@@ -25,161 +27,41 @@ public:
     AVL_Tree<T>(const AVL_Tree<T> &tree) = delete;
 
     ~AVL_Tree(); //do after
-    int add(const T &data) {
 
-        root->son_smaller = nullptr;
-        root->son_larger = nullptr;
-        if (root == nullptr) {
-            root = base;
-            root->father = nullptr;
-            root->height = 0;
-        } else
-        {
-            Node<T> *t = root;
-            while (t != nullptr) {
-                if (t->data == data) {
-                    return 0;
-                }
-                if (t->data < data) {
-                    t = t->son_larger;
-                }
-                if (t->data > data)
-                {
-                    t = t->son_smaller;
-                }
-            }
-            t = t->father;
-            if (t->data < data)
-            {
-                t->son_larger = base;
-                t->son_larger->father = t;
-            }
-            else
-            {
-                t->son_smaller = base;
-                t->son_smaller->father = t;
-            }
-            height(t);
-            balancefactor(t);
-            return 1;
-        }
-    }//not to use
     int height(Node<T> *t)
     {
-        if(t->son_smaller!= nullptr && t->son_larger!= nullptr)
-        {
-            if(t->son_smaller->height>t->son_larger->height)
-            {
-                return t->son_smaller->height+1 ;
-            }
-            else
-            {
-                return t->son_larger->height+1;
-            }
-        }
-        if (t->son_smaller== nullptr && t->son_larger!= nullptr)
-        {
-            return t->son_larger->height+1;
-        }
-        if (t->son_smaller!= nullptr && t->son_larger== nullptr)
-        {
-            return t->son_smaller->height+1;
-        }
-        if(t->son_smaller== nullptr && t->son_larger== nullptr)
-        {
-            return 0;
+        if (t == nullptr)
+            return -1;
+        else {
+            int s_height = t->son_smaller->height;
+            int l_height = t->son_larger->height;
+            return std::max(s_height, l_height) + 1;
         }
     }
 
-    void balancefactor(Node<T> *t)
-    {
-        int counterleft = 0;
-        int counterright = 0;
-        Node<T> left = t;
-        Node<T> right = t;
-        while (left->son_smaller != nullptr) {
-            counterleft += 1;
-            left = left->son_smaller;
-        }
-        while (right->son_larger != nullptr) {
-            counterright += 1;
-            right = right->son_larger;
-        }
-        t->balance_factor = counterleft - counterright;
-        while ((t->balance_factor == 1 || t->balance_factor == -1))
-        {
-            if(t->father== nullptr)
-            {
-                break;
-            }
-            if (t->father->son_smaller==t)
-            {
-                t->father->balance_factor= t->father->balance_factor+1;
-            }
-            if (t->father->son_larger==t)
-            {
-                t->father->balance_factor= t->father->balance_factor-1;
-            }
-            t=t->father;
-        }
-        if (t->balance_factor>1 || t->balance_factor<-1)
-        {
-            if(t->balance_factor>1 && t->son_smaller->balance_factor<0)
-            {
-                rotatelr(t);
-            }
-            if(t->balance_factor>1 && t->son_smaller->balance_factor>-1)
-            {
-                rotatell(t);
-            }
-            if(t->balance_factor<-1 && t->son_smaller->balance_factor<1)
-            {
-                rotaterr(t);
-            }
-            if(t->balance_factor<-1 && t->son_smaller->balance_factor>1)
-            {
-                rotaterl(t);
-            }
-            //t->balance_factor=0;
-        }
-
-    }//not in use
     int bf(Node<T> *t)
     {
-        if(t->son_smaller!= nullptr && t->son_larger!= nullptr)
-        {
-            return (t->son_smaller->height-t->son_larger->height);
-        }
-        if(t->son_smaller!= nullptr && t->son_larger== nullptr)
-        {
-            return t->son_smaller->height;
-        }
-        if(t->son_smaller== nullptr && t->son_larger!= nullptr)
-        {
-            return t->son_larger->height;
-        }
-        if(t->son_smaller== nullptr && t->son_larger== nullptr)
-        {
-            return 0;
-        }
+        return t->son_smaller->height - t->son_larger->height;
     }
 
     Node<T>* search(const T& data)
     {
+        if (root == nullptr)
+            return nullptr;
         Node<T>* t= root;
-        while(t!= nullptr)
+        while(t != nullptr)
         {
-            if(t->data==data)
+            if(t->data == data)
             {
                 return t;
             }
-            if(t->data>data)
+            if(t->data > data)
             {
-                t=t->son_smaller;
+                t = t->son_smaller;
             }
             else
             {
-                t=t->son_larger;
+                t = t->son_larger;
             }
         }
         return nullptr;
@@ -192,115 +74,113 @@ public:
          return false;
      }
 
-     void rotate_LL (Node<T>* node)
-     {
-         //Node<T>* temp = node;
-         if(node->father > node)
-             node->father->son_smaller = node->son_smaller;
-         else
-             node->father->son_larger = node->son_smaller;
-         node->son_smaller = node->son_smaller->son_larger; //B->Ar
-         node->son_smaller->son_larger = node; //A->B
-
-     }
-
-
-
-
-
-    Node<T>* rotaterr(Node<T>* t)
-    {
-        Node<T>* temp=t->son_larger->son_smaller;//forB
-        t->son_larger->father=t->father;
-        t->father=t->son_larger;
-        if (t->father->son_smaller==t)
-        {
-            t->father->son_smaller=t->son_larger;
-        }
-        if (t->father->son_larger==t)
-        {
-            t->father->son_larger=t->son_larger;
-        }
-        t->son_larger=temp;
-        return t;
+    Node<T>* rotate_LL(Node<T>* t) {
+        Node<T> *tmp1 = t;
+        Node<T> *tmp2 = t->son_smaller;
+        tmp1->son_smaller = tmp2->son_larger;
+        tmp1->son_smaller->father = tmp1;
+        tmp2->son_larger = tmp1;
+        tmp2->father = tmp1->father;
+        tmp1->father = tmp2;
+        return tmp2;
     }
-    int insert(Node<T>* t,const T& data)
+
+    Node<T>* rotate_RR(Node<T>* t) {
+        Node<T> *temp1 = t;
+        Node<T> *temp2 = t->son_larger;
+        temp1->son_larger = temp2->son_smaller;
+        temp1->son_larger->father = temp1;
+        temp2->son_smaller = temp1;
+        temp2->father = temp1->father;
+        temp1->father = temp2;
+        return temp2;
+    }
+
+    Node<T>* rotate_RL(Node<T>* t)
+    {
+        Node<T> *temp1 = t;  //points to A
+        Node<T> *temp2 = t->son_larger;  //points to B
+        Node<T> *temp3 = t->son_larger->son_smaller;  //points to C
+        temp1->son_larger = temp3->son_smaller;  //right side of A point to left of C
+        temp3->son_smaller->father = temp1;  //right side of C points to new father A
+        temp2->son_smaller = temp3->son_larger;  //left side of B points to right side of C
+        temp3->son_larger->father = temp2;  //right side of C points to new father B
+        temp3->son_smaller = temp1;  //left side C points to A
+        temp3->son_larger = temp2;  //right side C points to B
+        temp1->father = temp3;  //Apoints to father C
+        temp3->father = t->father;  //C points to A's father (C's father pointer)
+        temp2->father = temp3;  //B points to father C
+        return temp3;  // return new C to be t.
+    }
+
+    Node<T>* rotate_LR(Node<T>* t)
+    {
+        Node<T> *temp1 = t;
+        Node<T> *temp2 = t->son_smaller;
+        Node<T> *temp3 = t->son_smaller->son_larger;
+        temp1->son_smaller = temp3->son_larger;
+        temp3->son_larger->father = temp1;
+        temp2->son_larger = temp3->son_smaller;
+        temp3->son_smaller->father = temp2;
+        temp3->son_larger = temp1;
+        temp3->son_smaller = temp2;
+        temp1->father = temp3;
+        temp3->father = t->father;
+        temp2->father = temp3;
+        return temp3;
+    }
+
+    Node<T>* insert(Node<T>* t,const T& data)
     {
         if (t == nullptr)
         {
-            try {
-                Node<T> *base = new(Node<T>);
+            try
+            {
+                Node<T> *base = &new(Node<T>);
                 base->data = data;
-                if (base == nullptr) {
-                    throw;
-                }
+                base->son_larger = nullptr;
+                base->son_smaller = nullptr;
+                return base;
             }
-            catch (const std::bad_alloc &e) {
+            catch (...)
+            {
                 throw;
             }
-          t=base;
-            t->son_larger= nullptr;
-            t->son_smaller= nullptr;
         }
         else
         {
             if (t->data < data)
             {
-                insert(t->son_larger, data);
-                if(t->son_larger->data==data)
-                {
-                    t->son_larger->father=t;
-                }
+                t->son_larger = insert(t->son_larger, data);
+                if(t->son_larger->data == data)
+                    t->son_larger->father = t;
             }
-            if (t->data > data)
+            else if (t->data > data)
             {
-                insert(t->son_smaller, data);
-                if(t->son_smaller->data==data)
-                {
-                    t->son_smaller->father=t;
-                }
+                t->son_smaller = insert(t->son_smaller, data);
+                if(t->son_smaller->data == data)
+                    t->son_smaller->father = t;
+            }
+            else
+            {
+                return nullptr;
             }
             t->height = height(t);
-            if (balancefactor(t) == 2 && balancefactor(t->son_smaller) =>0)
+            if (balancefactor(t) == 2 && balancefactor(t->son_smaller) >= 0)
             {
-                t = rotatell(t);
+                t = rotate_LL(t);
             }
             if (balancefactor(t) == 2 && balancefactor(t->son_smaller) < 0) {
-                t = rotatelr(t);
+                t = rotate_LR(t);
             }
             if (balancefactor(t) == -2 && balancefactor(t->son_larger) <= 0) {
-                t = rotaterr(t);
+                t = rotate_RR(t);
             }
             if (balancefactor(t) == -2 && balancefactor(t->son_larger) == 1) {
-                t = rotaterr(t);
+                t = rotate_RL(t);
             }
-            return ;
+            return t;
         }
-    }
-    Node<T>* rotaterl(Node<T>* t)
-    {
-        Node<T> *temp1 = t;//points to A
-        Node<T> *temp2 = t->son_larger;//points to B
-        Node<T> *temp3 = t->son_larger->son_smaller;//points to C
-        temp1->son_larger=temp3->son_smaller;//right side of A point to left of C
-        temp3->son_smaller->father=temp1;//right side of C points to new father A
-        temp2->son_smaller=temp3->son_larger//left side of B points to right side of C
-        temp3->son_larger->father=temp2;//right side of C points to new father B
-        temp3->son_smaller=temp1;//left side C points to A
-        temp3->son_larger=temp2;//right side C points to B
-        temp1->father=temp3;//Apoints to father C
-        temp3->father=t->father;//C points to A's father (C's father pointer)
-        temp2->father=temp3;//B points to father C
-        return temp3;// return new C to be t.
-
-
-    }
-
-
-        temp1->son_larger=t->son_larger->son_smaller->son_smaller;
-        t->son_larger->son_smaller->son_smaller=t;
-        temp2->son_smaller=temp2->son_smaller->son_larger;
-
     }
 
 };
