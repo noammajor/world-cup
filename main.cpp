@@ -8,12 +8,15 @@ struct Node
     T data;
     int balance_factor;
 };
+
+
 template<class T>
 class AVL_Tree
  {
-Node<T>*  root;
+    Node<T>*  root;
 public:
-    AVL_Tree() {
+    AVL_Tree()
+    {
         root = nullptr;
     }
 
