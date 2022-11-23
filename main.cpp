@@ -183,4 +183,62 @@ public:
         }
     }
 
+    bool remove (int num)
+    {
+        if (root == nullptr)
+            return false;
+        Node<T> *ptr = root;
+        while (ptr != nullptr)
+        {
+            if (ptr->data > num)
+                ptr = ptr->son_smaller;
+            else if (ptr->data < num)
+                ptr = ptr->son_larger;
+            else
+            {
+                if (isLeaf(ptr))
+                {
+                    if (ptr->father->data > ptr->data)
+                        ptr->father->son_smaller = nullptr;
+                    else
+                        ptr->father->son_larger = nullptr;
+                    return true;
+                }
+                else if (ptr->son_larger == nullptr)
+                {
+                    if (ptr->father->data > ptr->data)
+                        ptr->father->son_smaller = ptr->son_smaller;
+                    else
+                        ptr->father->son_larger = ptr->son_smaller;
+                    ptr->son_smaller->father = ptr->father;
+                }
+                else if (ptr->son_smaller == nullptr)
+                {
+                    if (ptr->father->data > ptr->data)
+                        ptr->father->son_smaller = ptr->son_larger;
+                    else
+                        ptr->father->son_larger = ptr->son_larger;
+                    ptr->son_larger->father = ptr->father;
+                }
+                else
+                {
+                    Node<T>* temp = ptr->son_larger;
+                    while (temp->son_smaller != nullptr)
+                        temp = temp->son_smaller;
+                    temp->father->son_smaller = ptr;
+                    if (ptr->father->data > ptr->data)
+                        ptr->father->son_smaller = temp;
+                    else
+                        ptr->father->son_larger = temp;
+
+                    //father = null?
+
+                    //balance height
+
+                }
+
+            }
+        }
+    }
+
 };
