@@ -7,11 +7,14 @@ int main()
 {
     AVL_Tree<int> tree;
 
-    tree.insert_to_tree(5);
-    tree.insert_to_tree(7);
-    tree.insert_to_tree(2);
     tree.insert_to_tree(6);
-    tree.insert_to_tree(9);
+    tree.insert_to_tree(5);
+    tree.insert_to_tree(8);
+    tree.insert_to_tree(4);
+    tree.insert_to_tree(4);
+    tree.insert_to_tree(3);
+    tree.insert_to_tree(2);
+    tree.remove(3);
     tree.insert_to_tree(1);
     int* to_print = new int[6];
     tree.print_tree(to_print);

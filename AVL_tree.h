@@ -73,8 +73,8 @@ int AVL_Tree<T>::height(Node<T>* t)
         return -1;
     else
     {
-        int s_height = (t->son_smaller == nullptr ? -1 : height(t->son_smaller));
-        int l_height = (t->son_larger == nullptr ? -1 : height(t->son_larger));
+        int s_height = (t->son_smaller == nullptr ? -1 : t->son_smaller->height);
+        int l_height = (t->son_larger == nullptr ? -1 : t->son_larger->height);
         return max(s_height, l_height) + 1;
     }
 }
@@ -84,7 +84,7 @@ int AVL_Tree<T>::bf(Node<T> *t)
 {
     int s_height = (t->son_smaller == nullptr ? -1 : t->son_smaller->height);
     int l_height = (t->son_larger == nullptr ? -1 : t->son_larger->height);
-    return l_height - s_height;
+    return s_height - l_height;
 }
 
 template<class T>
@@ -112,11 +112,13 @@ Node<T>* AVL_Tree<T>::search(const int data)
 }
 
 template<class T>
-Node<T>* AVL_Tree<T>::rotate_LL(Node<T>* t) {
+Node<T>* AVL_Tree<T>::rotate_LL(Node<T>* t)
+{
     Node<T> *temp1 = t;
     Node<T> *temp2 = t->son_smaller;
     temp1->son_smaller = temp2->son_larger;
-    temp1->son_smaller->father = temp1;
+    if (temp1->son_smaller)
+        temp1->son_smaller->father = temp1;
     temp2->son_larger = temp1;
     temp2->father = temp1->father;
     temp1->father = temp2;
@@ -131,7 +133,8 @@ Node<T>* AVL_Tree<T>::rotate_RR(Node<T>* t)
     Node<T> *temp1 = t;
     Node<T> *temp2 = t->son_larger;
     temp1->son_larger = temp2->son_smaller;
-    temp1->son_larger->father = temp1;
+    if (temp1->son_larger)
+        temp1->son_larger->father = temp1;
     temp2->son_smaller = temp1;
     temp2->father = temp1->father;
     temp1->father = temp2;
@@ -147,9 +150,11 @@ Node<T>* AVL_Tree<T>::rotate_RL(Node<T>* t)
     Node<T> *temp2 = t->son_larger;  //points to B
     Node<T> *temp3 = t->son_larger->son_smaller;  //points to C
     temp1->son_larger = temp3->son_smaller;  //right side of A point to left of C
-    temp3->son_smaller->father = temp1;  //right side of C points to new father A
+    if (temp3->son_smaller)
+        temp3->son_smaller->father = temp1;  //right side of C points to new father A
     temp2->son_smaller = temp3->son_larger;  //left side of B points to right side of C
-    temp3->son_larger->father = temp2;  //right side of C points to new father B
+    if (temp2->son_smaller)
+        temp2->son_smaller->father = temp2;  //right side of C points to new father B
     temp3->son_smaller = temp1;  //left side C points to A
     temp3->son_larger = temp2;  //right side C points to B
     temp1->father = temp3;  //A points to father C
@@ -168,9 +173,11 @@ Node<T>* AVL_Tree<T>::rotate_LR(Node<T>* t)
     Node<T> *temp2 = t->son_smaller;
     Node<T> *temp3 = t->son_smaller->son_larger;
     temp1->son_smaller = temp3->son_larger;
-    temp3->son_larger->father = temp1;
+    if (temp3->son_larger)
+        temp3->son_larger->father = temp1;
     temp2->son_larger = temp3->son_smaller;
-    temp3->son_smaller->father = temp2;
+    if (temp2->son_larger)
+        temp2->son_larger->father = temp2;
     temp3->son_larger = temp1;
     temp3->son_smaller = temp2;
     temp1->father = temp3;
@@ -205,6 +212,7 @@ Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
             base->data = data;
             base->son_larger = nullptr;
             base->son_smaller = nullptr;
+            base->height = 0;
             return base;
         }
         catch (...)
@@ -234,7 +242,7 @@ Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
         {
             return nullptr;
         }
-        t->height = height(t);
+        //t->height = height(t);
         t = fix_balance(t);
         return t;
     }
@@ -247,15 +255,17 @@ Node<T>* AVL_Tree<T>::fix_balance (Node<T>* t)
     {
         t = rotate_LL(t);
     }
-    if (bf(t) == 2 && bf(t->son_smaller) < 0) {
+    else if (bf(t) == 2 && bf(t->son_smaller) < 0) {
         t = rotate_LR(t);
     }
-    if (bf(t) == -2 && bf(t->son_larger) <= 0) {
+    else if (bf(t) == -2 && bf(t->son_larger) <= 0) {
         t = rotate_RR(t);
     }
-    if (bf(t) == -2 && bf(t->son_larger) == 1) {
+    else if (bf(t) == -2 && bf(t->son_larger) == 1) {
         t = rotate_RL(t);
     }
+    else
+        t->height = height(t);
     return t;
 }
 
@@ -297,7 +307,6 @@ bool AVL_Tree<T>::remove (int num)
             remove_half_leaf(ptr);
         while (temp2->father != nullptr)
         {
-            temp2->height = height(temp2);
             temp2 = fix_balance(temp2);
             temp2 = temp2->father;
         }
