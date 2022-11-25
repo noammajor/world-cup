@@ -11,3 +11,5 @@
 .idea/
 .cmake-build-debug/
 .CMakeLists.txt
+
+.idea/module.xml
