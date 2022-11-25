@@ -3,6 +3,11 @@
 
 using namespace std;
 
+bool func(int a,  int b)
+{
+    return a>b;
+}
+
 template<class T>
 struct Node
 {
@@ -19,9 +24,10 @@ class AVL_Tree
 {
 
     Node<T>*  root;
+    bool (*is_bigger)(T a, T b);
 
 public:
-    AVL_Tree(): root(nullptr){}
+    explicit AVL_Tree(bool (*func)(T a, T b)): root(nullptr), is_bigger(func){}
 
     AVL_Tree<T> &operator=(const AVL_Tree<T> &tree) = delete;
 
@@ -99,7 +105,7 @@ Node<T>* AVL_Tree<T>::search(const int data)
         {
             return t;
         }
-        if(t->data > data)
+        if(is_bigger(t->data, data))
         {
             t = t->son_smaller;
         }
@@ -222,7 +228,7 @@ Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
     }
     else
     {
-        if (t->data < data)
+        if (is_bigger(data, t->data))
         {
             Node<T>* temp = insert(t->son_larger, data);
             if (temp == nullptr)
@@ -230,7 +236,7 @@ Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
             t->son_larger = temp;
             temp->father = t;
         }
-        else if (t->data > data)
+        else if (is_bigger(t->data, data))
         {
             Node<T>* temp = insert(t->son_smaller, data);
             if (temp == nullptr)
@@ -242,7 +248,6 @@ Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
         {
             return nullptr;
         }
-        //t->height = height(t);
         t = fix_balance(t);
         return t;
     }
@@ -280,35 +285,45 @@ bool AVL_Tree<T>::remove (int num)
     {
         remove_leaf(ptr);
     }
-    else if (ptr->son_larger == nullptr || ptr->son_smaller == nullptr)
+    else if (ptr->son_larger == nullptr || ptr->son_smaller == nullptr) {
         remove_half_leaf(ptr);
+    }
     else
     {
-        Node<T>* temp1 = ptr->son_larger;
-        Node<T>* temp2 = temp1->son_smaller;
-        while (temp2->son_smaller != nullptr)
-            temp2 = temp2->son_smaller;
-        ptr->son_larger = temp2->son_larger;
-        if (temp2->son_larger != nullptr)
-            temp2->son_larger->father = ptr;
-        temp2->son_larger = temp1;
-        temp1->father = temp2;
-        temp1 = temp2->father;
-        temp2->father = ptr->father;
-        if (ptr->father != nullptr && ptr->father->data > ptr->data)
-            ptr->father->son_smaller = temp2;
-        else if (ptr->father != nullptr)
-            ptr->father->son_larger = temp2;
-        ptr->father = temp1;
-        temp1->son_smaller = ptr;
-        if (isLeaf(ptr))
-            remove_leaf(ptr);
-        else
-            remove_half_leaf(ptr);
-        while (temp2->father != nullptr)
-        {
-            temp2 = fix_balance(temp2);
-            temp2 = temp2->father;
+        Node<T> *temp1 = ptr->son_larger;
+        Node<T> *temp2 = temp1->son_smaller;
+        if (temp1->son_smaller == nullptr) {
+            if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
+                ptr->father->son_smaller = temp1;
+            else if (ptr->father != nullptr)
+                ptr->father->son_larger = temp1;
+            temp1->father = ptr->father;
+            ptr->father = temp1;
+            ptr->son_larger = temp1->son_larger;
+        } else {
+            while (temp2->son_smaller != nullptr)
+                temp2 = temp2->son_smaller;
+            ptr->son_larger = temp2->son_larger;
+            if (temp2->son_larger != nullptr)
+                temp2->son_larger->father = ptr;
+            temp2->son_larger = temp1;
+            temp1->father = temp2;
+            temp1 = temp2->father;
+            temp2->father = ptr->father;
+            if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
+                ptr->father->son_smaller = temp2;
+            else if (ptr->father != nullptr)
+                ptr->father->son_larger = temp2;
+            ptr->father = temp1;
+            temp1->son_smaller = ptr;
+            if (isLeaf(ptr))
+                remove_leaf(ptr);
+            else
+                remove_half_leaf(ptr);
+            while (temp2->father != nullptr) {
+                temp2 = fix_balance(temp2);
+                temp2 = temp2->father;
+            }
         }
     }
     fix_height(ptr_father);
@@ -325,7 +340,7 @@ bool AVL_Tree<T>::isLeaf (Node<T>* node)
 
 template<class T>
 void AVL_Tree<T>::remove_leaf (Node<T>* ptr) {
-    if (ptr->father->data > ptr->data)
+    if (is_bigger(ptr->father->data, ptr->data))
         ptr->father->son_smaller = nullptr;
     else
         ptr->father->son_larger = nullptr;
@@ -336,7 +351,7 @@ void AVL_Tree<T>::remove_half_leaf (Node<T>* ptr)
 {
     if (ptr->son_larger == nullptr)
     {
-        if (ptr->father != nullptr && ptr->father->data > ptr->data)
+        if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
             ptr->father->son_smaller = ptr->son_smaller;
         else if (ptr->father != nullptr)
             ptr->father->son_larger = ptr->son_smaller;
@@ -344,7 +359,7 @@ void AVL_Tree<T>::remove_half_leaf (Node<T>* ptr)
     }
     else
     {
-        if (ptr->father != nullptr && ptr->father->data > ptr->data)
+        if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
             ptr->father->son_smaller = ptr->son_larger;
         else  if (ptr->father != nullptr)
             ptr->father->son_larger = ptr->son_larger;
