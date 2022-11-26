@@ -9,7 +9,7 @@ int main()
 
 
 
-    AVL_Tree<int> tree(func);
+    AVL_Tree<int, intBigger> tree;
 
     tree.insert_to_tree(6);
     tree.insert_to_tree(5);

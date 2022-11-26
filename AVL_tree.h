@@ -3,12 +3,8 @@
 
 using namespace std;
 
-bool func(int a,  int b)
-{
-    return a>b;
-}
 
-template<class T>
+template<class T, class Cond>
 struct Node
 {
     Node* father;
@@ -19,61 +15,63 @@ struct Node
 };
 
 
-template<class T>
+template<class T, class Cond>
 class AVL_Tree
 {
 
-    Node<T>*  root;
-    bool (*is_bigger)(T a, T b);
+    Node<T, Cond>*  root;
+    Cond is_bigger;
 
 public:
-    explicit AVL_Tree(bool (*func)(T a, T b)): root(nullptr), is_bigger(func){}
+    AVL_Tree(): root(nullptr){}
 
-    AVL_Tree<T> &operator=(const AVL_Tree<T> &tree) = delete;
+    AVL_Tree<T, Cond> &operator=(const AVL_Tree<T, Cond> &tree) = delete;
 
-    AVL_Tree<T>(const AVL_Tree<T> &tree) = delete;
+    AVL_Tree<T, Cond>(const AVL_Tree<T, Cond> &tree) = delete;
 
     ~AVL_Tree() = default; //do after
 
-    int height(Node<T> *t);
+    int height(Node<T, Cond> *t);
 
-    int bf(Node<T> *t);
+    int bf(Node<T, Cond> *t);
 
-    Node<T>* search(int data);
+    Node<T, Cond>* search(int data);
 
-    Node<T>* rotate_LL(Node<T>* t);
+    Node<T, Cond>* rotate_LL(Node<T, Cond>* t);
 
-    Node<T>* rotate_RR(Node<T>* t);
+    Node<T, Cond>* rotate_RR(Node<T, Cond>* t);
 
-    Node<T>* rotate_RL(Node<T>* t);
+    Node<T, Cond>* rotate_RL(Node<T, Cond>* t);
 
-    Node<T>* rotate_LR(Node<T>* t);
+    Node<T, Cond>* rotate_LR(Node<T, Cond>* t);
 
     bool insert_to_tree(const T& data);
 
-    Node<T>* insert(Node<T>* t,const T& data);
+    Node<T, Cond>* insert(Node<T, Cond>* t,const T& data);
 
-    Node<T>* fix_balance (Node<T>* t);
+    Node<T, Cond>* fix_balance (Node<T, Cond>* t);
 
     bool remove (int num);
 
-    bool isLeaf (Node<T>* node);
+    bool isLeaf (Node<T, Cond>* node);
 
-    void remove_leaf (Node<T>* ptr);
+    void remove_leaf (Node<T, Cond>* ptr);
 
-    void remove_half_leaf (Node<T>* ptr);
+    void remove_half_leaf (Node<T, Cond>* ptr);
 
-    void fix_height (Node<T>* node);
+    void fix_height (Node<T, Cond>* node);
 
     void print_tree (int* const output);
 
-    void inorder_print (Node<T>* node, int* const output);
+    void inorder_print (Node<T, Cond>* node, int* const output);
+
+    T get_data(Node<T, Cond>* node) const;
 
 };
 
 
-template<class T>
-int AVL_Tree<T>::height(Node<T>* t)
+template<class T, class Cond>
+int AVL_Tree<T, Cond>::height(Node<T, Cond>* t)
 {
     if (t == nullptr)
         return -1;
@@ -85,20 +83,20 @@ int AVL_Tree<T>::height(Node<T>* t)
     }
 }
 
-template<class T>
-int AVL_Tree<T>::bf(Node<T> *t)
+template<class T, class Cond>
+int AVL_Tree<T, Cond>::bf(Node<T, Cond> *t)
 {
     int s_height = (t->son_smaller == nullptr ? -1 : t->son_smaller->height);
     int l_height = (t->son_larger == nullptr ? -1 : t->son_larger->height);
     return s_height - l_height;
 }
 
-template<class T>
-Node<T>* AVL_Tree<T>::search(const int data)
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::search(const int data)
 {
     if (root == nullptr)
         return nullptr;
-    Node<T>* t= root;
+    Node<T, Cond>* t= root;
     while(t != nullptr)
     {
         if(t->data == data)
@@ -117,11 +115,11 @@ Node<T>* AVL_Tree<T>::search(const int data)
     return nullptr;
 }
 
-template<class T>
-Node<T>* AVL_Tree<T>::rotate_LL(Node<T>* t)
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::rotate_LL(Node<T, Cond>* t)
 {
-    Node<T> *temp1 = t;
-    Node<T> *temp2 = t->son_smaller;
+    Node<T, Cond> *temp1 = t;
+    Node<T, Cond> *temp2 = t->son_smaller;
     temp1->son_smaller = temp2->son_larger;
     if (temp1->son_smaller)
         temp1->son_smaller->father = temp1;
@@ -133,11 +131,11 @@ Node<T>* AVL_Tree<T>::rotate_LL(Node<T>* t)
     return temp2;
 }
 
-template<class T>
-Node<T>* AVL_Tree<T>::rotate_RR(Node<T>* t)
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::rotate_RR(Node<T, Cond>* t)
 {
-    Node<T> *temp1 = t;
-    Node<T> *temp2 = t->son_larger;
+    Node<T, Cond> *temp1 = t;
+    Node<T, Cond> *temp2 = t->son_larger;
     temp1->son_larger = temp2->son_smaller;
     if (temp1->son_larger)
         temp1->son_larger->father = temp1;
@@ -149,12 +147,12 @@ Node<T>* AVL_Tree<T>::rotate_RR(Node<T>* t)
     return temp2;
 }
 
-template<class T>
-Node<T>* AVL_Tree<T>::rotate_RL(Node<T>* t)
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::rotate_RL(Node<T, Cond>* t)
 {
-    Node<T> *temp1 = t;  //points to A
-    Node<T> *temp2 = t->son_larger;  //points to B
-    Node<T> *temp3 = t->son_larger->son_smaller;  //points to C
+    Node<T, Cond> *temp1 = t;  //points to A
+    Node<T, Cond> *temp2 = t->son_larger;  //points to B
+    Node<T, Cond> *temp3 = t->son_larger->son_smaller;  //points to C
     temp1->son_larger = temp3->son_smaller;  //right side of A point to left of C
     if (temp3->son_smaller)
         temp3->son_smaller->father = temp1;  //right side of C points to new father A
@@ -172,12 +170,12 @@ Node<T>* AVL_Tree<T>::rotate_RL(Node<T>* t)
     return temp3;  // return new C to be t.
 }
 
-template<class T>
-Node<T>* AVL_Tree<T>::rotate_LR(Node<T>* t)
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::rotate_LR(Node<T, Cond>* t)
 {
-    Node<T> *temp1 = t;
-    Node<T> *temp2 = t->son_smaller;
-    Node<T> *temp3 = t->son_smaller->son_larger;
+    Node<T, Cond> *temp1 = t;
+    Node<T, Cond> *temp2 = t->son_smaller;
+    Node<T, Cond> *temp3 = t->son_smaller->son_larger;
     temp1->son_smaller = temp3->son_larger;
     if (temp3->son_larger)
         temp3->son_larger->father = temp1;
@@ -195,10 +193,10 @@ Node<T>* AVL_Tree<T>::rotate_LR(Node<T>* t)
     return temp3;
 }
 
-template<class T>
-bool AVL_Tree<T>::insert_to_tree(const T& data)
+template<class T, class Cond>
+bool AVL_Tree<T, Cond>::insert_to_tree(const T& data)
 {
-    Node<T>* ptr = insert(root, data);
+    Node<T, Cond>* ptr = insert(root, data);
     if (ptr != nullptr)
     {
         root = ptr;
@@ -207,14 +205,14 @@ bool AVL_Tree<T>::insert_to_tree(const T& data)
     return false;
 }
 
-template<class T>
-Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::insert(Node<T, Cond>* t,const T& data)
 {
     if (t == nullptr)
     {
         try
         {
-            Node<T>* base = new(Node<T>);
+            Node<T, Cond>* base = new(Node<T, Cond>);
             base->data = data;
             base->son_larger = nullptr;
             base->son_smaller = nullptr;
@@ -230,7 +228,7 @@ Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
     {
         if (is_bigger(data, t->data))
         {
-            Node<T>* temp = insert(t->son_larger, data);
+            Node<T, Cond>* temp = insert(t->son_larger, data);
             if (temp == nullptr)
                 return nullptr;
             t->son_larger = temp;
@@ -238,7 +236,7 @@ Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
         }
         else if (is_bigger(t->data, data))
         {
-            Node<T>* temp = insert(t->son_smaller, data);
+            Node<T, Cond>* temp = insert(t->son_smaller, data);
             if (temp == nullptr)
                 return nullptr;
             t->son_smaller = temp;
@@ -253,8 +251,8 @@ Node<T>* AVL_Tree<T>::insert(Node<T>* t,const T& data)
     }
 }
 
-template<class T>
-Node<T>* AVL_Tree<T>::fix_balance (Node<T>* t)
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::fix_balance (Node<T, Cond>* t)
 {
     if (bf(t) == 2 && bf(t->son_smaller) >= 0)
     {
@@ -274,13 +272,13 @@ Node<T>* AVL_Tree<T>::fix_balance (Node<T>* t)
     return t;
 }
 
-template<class T>
-bool AVL_Tree<T>::remove (int num)
+template<class T, class Cond>
+bool AVL_Tree<T, Cond>::remove (int num)
 {
-    Node<T> *ptr = search(num);
+    Node<T, Cond> *ptr = search(num);
     if (ptr == nullptr)
         return false;
-    Node<T>* ptr_father = ptr->father;
+    Node<T, Cond>* ptr_father = ptr->father;
     if (isLeaf(ptr))
     {
         remove_leaf(ptr);
@@ -290,9 +288,10 @@ bool AVL_Tree<T>::remove (int num)
     }
     else
     {
-        Node<T> *temp1 = ptr->son_larger;
-        Node<T> *temp2 = temp1->son_smaller;
-        if (temp1->son_smaller == nullptr) {
+        Node<T, Cond> *temp1 = ptr->son_larger;
+        Node<T, Cond> *temp2 = temp1->son_smaller;
+        if (temp1->son_smaller == nullptr)
+        {
             if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
                 ptr->father->son_smaller = temp1;
             else if (ptr->father != nullptr)
@@ -300,7 +299,9 @@ bool AVL_Tree<T>::remove (int num)
             temp1->father = ptr->father;
             ptr->father = temp1;
             ptr->son_larger = temp1->son_larger;
-        } else {
+        }
+        else
+        {
             while (temp2->son_smaller != nullptr)
                 temp2 = temp2->son_smaller;
             ptr->son_larger = temp2->son_larger;
@@ -320,7 +321,8 @@ bool AVL_Tree<T>::remove (int num)
                 remove_leaf(ptr);
             else
                 remove_half_leaf(ptr);
-            while (temp2->father != nullptr) {
+            while (temp2->father != nullptr)
+            {
                 temp2 = fix_balance(temp2);
                 temp2 = temp2->father;
             }
@@ -330,24 +332,24 @@ bool AVL_Tree<T>::remove (int num)
     return true;
 }
 
-template<class T>
-bool AVL_Tree<T>::isLeaf (Node<T>* node)
+template<class T, class Cond>
+bool AVL_Tree<T, Cond>::isLeaf (Node<T, Cond>* node)
 {
     if (node->son_larger == nullptr && node->son_smaller == nullptr)
         return true;
     return false;
 }
 
-template<class T>
-void AVL_Tree<T>::remove_leaf (Node<T>* ptr) {
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::remove_leaf (Node<T, Cond>* ptr) {
     if (is_bigger(ptr->father->data, ptr->data))
         ptr->father->son_smaller = nullptr;
     else
         ptr->father->son_larger = nullptr;
 }
 
-template<class T>
-void AVL_Tree<T>::remove_half_leaf (Node<T>* ptr)
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::remove_half_leaf (Node<T, Cond>* ptr)
 {
     if (ptr->son_larger == nullptr)
     {
@@ -367,8 +369,8 @@ void AVL_Tree<T>::remove_half_leaf (Node<T>* ptr)
     }
 }
 
-template<class T>
-void AVL_Tree<T>::fix_height (Node<T>* node)
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::fix_height (Node<T, Cond>* node)
 {
     while (node != nullptr && node->height != height(node))
     {
@@ -378,14 +380,14 @@ void AVL_Tree<T>::fix_height (Node<T>* node)
     }
 }
 
-template<class T>
-void AVL_Tree<T>::print_tree (int* const output)
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::print_tree (int* const output)
 {
     inorder_print(root, output);
 }
 
-template<class T>
-void AVL_Tree<T>::inorder_print (Node<T>* node, int* const output)
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node, int* const output)
 {
     static int i = 0;
     if (node == nullptr)
@@ -395,5 +397,23 @@ void AVL_Tree<T>::inorder_print (Node<T>* node, int* const output)
     inorder_print(node->son_larger, output);
 }
 
+template<class T, class Cond>
+T AVL_Tree<T, Cond>::get_data(Node<T, Cond>* node) const
+{
+    return node->data;
+}
+
+class intBigger
+{
+public:
+    intBigger()= default;
+
+    ~intBigger()= default;
+
+    bool operator()(const int &p1, const int &p2) const
+    {
+        return p1 > p2;
+    }
+};
 
 #endif //AVL_TREE_H
