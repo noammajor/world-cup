@@ -61,10 +61,18 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         if (node == nullptr || playersID.search(playerId))
             return StatusType::FAILURE;
         if (legal_team)
+        {
             Player player(playerId, teamId, gamesPlayed, goals, cards, goalKeeper, legel_teams.get_data(node));
+            playersID.insert_to_tree(&player);
+            playersGoals.insert_to_tree(&player);
+        }
         else
+        {
             Player player(playerId, teamId, gamesPlayed, goals, cards, goalKeeper, illegel_teams.get_data(node));
-        playersID->insert_to_tree(player) && playersGoals->insert_to_tree(player);
+            playersID.insert_to_tree(&player);
+            playersGoals.insert_to_tree(&player);
+        }
+
     }
     catch (std::bad_alloc&)
     {

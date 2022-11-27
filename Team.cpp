@@ -1,5 +1,5 @@
 #include "Team.h"
-
+#include "Player.h"
 
 Team:: operator int()
 {
@@ -15,10 +15,10 @@ void Team::remove_player(int playerID)
 {
     Player* to_remove = players->search(playerID);
     num_players--;
-    if (is_goalkeeper(to_remove))
+    if (to_remove->is_goalkeeper())
         num_goalkeepers--;
-    tot_goals_cards -= player->get_goals;
-    tot_goals_cards += player->get_cards;
+    tot_goals_cards -= to_remove->get_goals();
+    tot_goals_cards += to_remove->get_cards();
     players->remove(playerID);
 }
 
