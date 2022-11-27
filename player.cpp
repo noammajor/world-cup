@@ -88,9 +88,7 @@ public:
             return false;
     }
 
-    class playerGoalsOrder
-    {
-    public:
+
         playerGoalsOrder();
         ~playerGoalsOrder();
         bool operator() (const player& p1,const player& p2) const
@@ -115,20 +113,18 @@ public:
             }
             return false;
         }
-    };
 
-    class PlayerIDOrder
-    {
-    public:
+
+
         PlayerIDOrder();
         ~PlayerIDOrder();
         bool operator()(const player& p1,const player& p2) const
         {
             return p1 > p2;
         }
-    };
 
-};
+
+
 
 
 
