@@ -13,9 +13,12 @@ class Player
     int teamsGamesPlayed;
 
 public:
+
     Player(int playerId, int teamId, int gamesPlayed, int goals, int cards, bool goalKeeper, Team *team):
-            player_id(playerId), games_played(gamesPlayed), team_Id(teamId), goals(goals), cards(cards),
-            goalkeeper(goalKeeper), my_team(team), teamsGamesPlayed(team->get_games_played()){}
+            my_team(team), team_Id(teamId), player_id(playerId), games_played(gamesPlayed),  goals(goals), cards(cards),
+            goalkeeper(goalKeeper), teamsGamesPlayed(team->get_games_played()) {}
+
+    Player(int playerID);
 
     ~Player() = default;
 
@@ -40,10 +43,20 @@ public:
     int get_goals() const;
 
     int get_cards() const;
-    int get_team() const;
-    void set_games(int gamesPlayed);
-    void set_goals(int scoredGoals);
-    void set_cards(int cardsReceived);
+
+    int get_teamID() const;
+
+    int get_playerID() const;
+
+    int get_team_games() const;
+
+    void add_games(int gamesPlayed);
+
+    void add_goals(int scoredGoals);
+
+    void add_cards(int cardsReceived);
+
+    Team* get_team() const;
 
     template<class condition>
     bool order(const Player &p1, const condition con) const;

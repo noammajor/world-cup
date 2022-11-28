@@ -30,18 +30,31 @@ public:
 
     void remove_player(int playerID);
 
-    void add_player (const Player* player);
+    void add_player (Player* player);
 
     int get_games_played() const;
 
     bool is_legal() const;
 
     bool operator >(const Team* p1) const;
-    int tot_points() const;
+
+    int tot_game_points() const;
+
+    int get_points() const;
+
     void add_points(int pointsadd);
+
     int get_num_players() const;
 
+    int get_num_goalkeepers() const;
 
+    void add_goals_cards(int to_add);
+
+    void more_game_played();
+
+    Player* get_top_player() const;
+
+    AVL_Tree<Player*, Player::PlayerGoalsOrder>* get_players() const;
 
 
 };

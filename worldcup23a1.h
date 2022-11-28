@@ -26,9 +26,9 @@ private:
 	int num_teams;
     int num_players;
     AVL_Tree<Team*, TeamIDOrder> legel_teams;
-    AVL_Tree<Team*, TeamIDOrder> illegel_teams;
-    AVL_Tree<Player*, PlayerIDOrder> playersID;
-    AVL_Tree<Player*, playerGoalsOrder> playersGoals;
+    AVL_Tree<Team*, TeamIDOrder> all_teams;
+    AVL_Tree<Player*, Player::PlayerIDOrder> playersID;
+    AVL_Tree<Player*, Player::PlayerGoalsOrder> playersGoals;
 	
 public:
 	// <DO-NOT-MODIFY> {

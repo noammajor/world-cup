@@ -3,6 +3,8 @@
 #include "Player.h"
 
 
+
+
 bool Player::operator >(const Player& p1) const
 {
     if(p1.player_id  < this->player_id)
@@ -12,18 +14,29 @@ bool Player::operator >(const Player& p1) const
     else
         return false;
 }
-void set_games(int gamesPlayed)
+
+void Player::add_games(int gamesPlayed)
 {
-    this->games_played=gamesPlayed;
+    games_played += gamesPlayed;
 }
-void set_goals(int scoredGoals)
+
+void Player::add_goals(int scoredGoals)
 {
-this->goals=scoredGoals;
+    goals += scoredGoals;
+    my_team->add_goals_cards(scoredGoals);
 }
-void set_cards(int cardsReceived)
+
+void Player::add_cards(int cardsReceived)
 {
-    this-> cards=cardsReceived;
+    cards += cardsReceived;
+    my_team->add_goals_cards(-cardsReceived);
 }
+
+Team* Player::get_team() const
+{
+    return my_team;
+}
+
 bool Player::operator ==(const Player& p1) const
 {
     if (this->player_id == p1.player_id)
@@ -67,6 +80,21 @@ int Player::get_goals() const
 int Player::get_cards() const
 {
     return goals;
+}
+
+int Player::get_teamID() const
+{
+    return team_Id;
+}
+
+int Player::get_playerID() const
+{
+    return player_id;
+}
+
+int Player::get_team_games() const
+{
+    return teamsGamesPlayed;
 }
 
 template<class condition>

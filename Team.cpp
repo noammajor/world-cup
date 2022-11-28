@@ -6,26 +6,51 @@ Team:: operator int()
     return teamID;
 }
 
-int get_num_players() const
+int Team::get_num_players() const
 {
-    return this->num_players;
+    return num_players;
+}
+
+int Team::get_num_goalkeepers() const
+{
+    return num_goalkeepers;
 }
 
 int Team::get_ID () const
 {
     return teamID;
 }
-void add_points(int pointsadd)
+
+void Team::add_points(int points_add)
 {
-    if(pointsadd!=1 && pointsadd!=3)
-        return;
-    else
-        this->points=this->points+pointsadd;
-    return;
+    points += points_add;
 }
+
+void Team::add_goals_cards(int to_add)
+{
+    tot_goals_cards += to_add;
+}
+
+void Team::more_game_played()
+{
+    games_played++;
+}
+
+Player* Team::get_top_player() const
+{
+    return players->get_higher();
+}
+
+AVL_Tree<Player*, Player::PlayerGoalsOrder>* Team::get_players() const
+{
+    return players;
+}
+
 void Team::remove_player(int playerID)
 {
-    Player* to_remove = players->search(playerID);
+    Player* to_remove = players->get_data(players->search(playerID));
+    if (!to_remove)
+        return;
     num_players--;
     if (to_remove->is_goalkeeper())
         num_goalkeepers--;
@@ -34,15 +59,15 @@ void Team::remove_player(int playerID)
     players->remove(playerID);
 }
 
-void Team::add_player (const Player* player)
+void Team::add_player (Player* player)
 {
-    players->insert(player);
+    players->insert_to_tree(player);
     num_players++;
-    if (is_goalkeeper(player))
+    if (player->is_goalkeeper())
         num_goalkeepers++;
-    tot_goals_cards += player->get_goals;
-    tot_goals_cards -= player->get_cards;
-    player->team_games(games_played);
+    tot_goals_cards += player->get_goals();
+    tot_goals_cards -= player->get_cards();
+    player->add_games(games_played);
 }
 
 int Team::get_games_played() const
@@ -66,9 +91,15 @@ bool Team::operator >(const Team* p1) const
     else
         return false;
 }
-int tot_points() const
+
+int Team::tot_game_points() const
 {
-    return tot_goals_cards+points;
+    return points + tot_goals_cards;
+}
+
+int Team::get_points() const
+{
+    return points;
 }
 
 

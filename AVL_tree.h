@@ -21,9 +21,10 @@ class AVL_Tree
 
     Node<T, Cond>*  root;
     Cond is_bigger;
+    Node<T, Cond>* higher_data;
 
 public:
-    AVL_Tree(): root(nullptr){}
+    AVL_Tree(): root(nullptr), higher_data(nullptr) {}
 
     AVL_Tree<T, Cond> &operator=(const AVL_Tree<T, Cond> &tree) = delete;
 
@@ -65,7 +66,15 @@ public:
 
     void inorder_print (Node<T, Cond>* node, int* const output);
 
-    T get_data(Node<T, Cond>* node) const;
+    void knockout_tree (int* const output, int min, int max);
+
+    void inorder_knockout (Node<T, Cond>* node, int* const output, int min, int max);
+
+    T& get_data(Node<T, Cond>* node) const;
+
+    Node<T, Cond>* get_root() const;
+
+    T& get_higher() const;
 
 };
 
@@ -217,6 +226,8 @@ Node<T, Cond>* AVL_Tree<T, Cond>::insert(Node<T, Cond>* t,const T& data)
             base->son_larger = nullptr;
             base->son_smaller = nullptr;
             base->height = 0;
+            if (!root)
+                higher_data = base;
             return base;
         }
         catch (...)
@@ -233,6 +244,8 @@ Node<T, Cond>* AVL_Tree<T, Cond>::insert(Node<T, Cond>* t,const T& data)
                 return nullptr;
             t->son_larger = temp;
             temp->father = t;
+            if (higher_data == t)
+                higher_data = temp;
         }
         else if (is_bigger(t->data, data))
         {
@@ -398,9 +411,46 @@ void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node, int* const output)
 }
 
 template<class T, class Cond>
-T AVL_Tree<T, Cond>::get_data(Node<T, Cond>* node) const
+void AVL_Tree<T, Cond>::knockout_tree (int* const output, int min, int max)
+{
+    inorder_knockout(root, output, min, max);
+}
+
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::inorder_knockout (Node<T, Cond>* node, int* const output, int min, int max)
+{
+    static int i = 0;
+    if (node == nullptr)
+        return;
+    if (node->data > min)
+        inorder_print(node->son_smaller, output);
+    if (node->data > min && node->data < max)
+    {
+        if (Cond (node->data, output[0]))
+        {
+
+        }
+    }
+    if(node->data < max)
+        inorder_print(node->son_larger, output);
+}
+
+template<class T, class Cond>
+T& AVL_Tree<T, Cond>::get_data(Node<T, Cond>* node) const
 {
     return node->data;
+}
+
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::get_root() const
+{
+    return root;
+}
+
+template<class T, class Cond>
+T& AVL_Tree<T, Cond>::get_higher() const
+{
+    return higher_data->data;
 }
 
 class intBigger
