@@ -6,11 +6,23 @@ Team:: operator int()
     return teamID;
 }
 
+int get_num_players() const
+{
+    return this->num_players;
+}
+
 int Team::get_ID () const
 {
     return teamID;
 }
-
+void add_points(int pointsadd)
+{
+    if(pointsadd!=1 && pointsadd!=3)
+        return;
+    else
+        this->points=this->points+pointsadd;
+    return;
+}
 void Team::remove_player(int playerID)
 {
     Player* to_remove = players->search(playerID);
@@ -53,6 +65,10 @@ bool Team::operator >(const Team* p1) const
     }
     else
         return false;
+}
+int tot_points() const
+{
+    return tot_goals_cards+points;
 }
 
 

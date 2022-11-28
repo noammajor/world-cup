@@ -12,7 +12,18 @@ bool Player::operator >(const Player& p1) const
     else
         return false;
 }
-
+void set_games(int gamesPlayed)
+{
+    this->games_played=gamesPlayed;
+}
+void set_goals(int scoredGoals)
+{
+this->goals=scoredGoals;
+}
+void set_cards(int cardsReceived)
+{
+    this-> cards=cardsReceived;
+}
 bool Player::operator ==(const Player& p1) const
 {
     if (this->player_id == p1.player_id)

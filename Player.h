@@ -40,6 +40,10 @@ public:
     int get_goals() const;
 
     int get_cards() const;
+    int get_team() const;
+    void set_games(int gamesPlayed);
+    void set_goals(int scoredGoals);
+    void set_cards(int cardsReceived);
 
     template<class condition>
     bool order(const Player &p1, const condition con) const;

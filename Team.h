@@ -37,7 +37,9 @@ public:
     bool is_legal() const;
 
     bool operator >(const Team* p1) const;
-
+    int tot_points() const;
+    void add_points(int pointsadd);
+    int get_num_players() const;
 
 
 
