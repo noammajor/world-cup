@@ -296,18 +296,18 @@ bool AVL_Tree<T, Cond>::remove (int num)
     {
         remove_leaf(ptr);
     }
-    else if (ptr->son_larger == nullptr || ptr->son_smaller == nullptr) {
+    else if (!ptr->son_larger || !ptr->son_smaller) {
         remove_half_leaf(ptr);
     }
     else
     {
         Node<T, Cond> *temp1 = ptr->son_larger;
         Node<T, Cond> *temp2 = temp1->son_smaller;
-        if (temp1->son_smaller == nullptr)
+        if (!temp1->son_smaller)
         {
-            if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
+            if (ptr->father && is_bigger(ptr->father->data, ptr->data))
                 ptr->father->son_smaller = temp1;
-            else if (ptr->father != nullptr)
+            else if (ptr->father)
                 ptr->father->son_larger = temp1;
             temp1->father = ptr->father;
             ptr->father = temp1;
@@ -315,18 +315,18 @@ bool AVL_Tree<T, Cond>::remove (int num)
         }
         else
         {
-            while (temp2->son_smaller != nullptr)
+            while (temp2->son_smaller)
                 temp2 = temp2->son_smaller;
             ptr->son_larger = temp2->son_larger;
-            if (temp2->son_larger != nullptr)
+            if (temp2->son_larger)
                 temp2->son_larger->father = ptr;
             temp2->son_larger = temp1;
             temp1->father = temp2;
             temp1 = temp2->father;
             temp2->father = ptr->father;
-            if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
+            if (ptr->father && is_bigger(ptr->father->data, ptr->data))
                 ptr->father->son_smaller = temp2;
-            else if (ptr->father != nullptr)
+            else if (ptr->father)
                 ptr->father->son_larger = temp2;
             ptr->father = temp1;
             temp1->son_smaller = ptr;
@@ -334,7 +334,7 @@ bool AVL_Tree<T, Cond>::remove (int num)
                 remove_leaf(ptr);
             else
                 remove_half_leaf(ptr);
-            while (temp2->father != nullptr)
+            while (temp2->father)
             {
                 temp2 = fix_balance(temp2);
                 temp2 = temp2->father;
@@ -348,7 +348,7 @@ bool AVL_Tree<T, Cond>::remove (int num)
 template<class T, class Cond>
 bool AVL_Tree<T, Cond>::isLeaf (Node<T, Cond>* node)
 {
-    if (node->son_larger == nullptr && node->son_smaller == nullptr)
+    if (!node->son_larger && !node->son_smaller)
         return true;
     return false;
 }
@@ -364,19 +364,19 @@ void AVL_Tree<T, Cond>::remove_leaf (Node<T, Cond>* ptr) {
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::remove_half_leaf (Node<T, Cond>* ptr)
 {
-    if (ptr->son_larger == nullptr)
+    if (!ptr->son_larger)
     {
-        if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
+        if (ptr->father && is_bigger(ptr->father->data, ptr->data))
             ptr->father->son_smaller = ptr->son_smaller;
-        else if (ptr->father != nullptr)
+        else if (ptr->father)
             ptr->father->son_larger = ptr->son_smaller;
         ptr->son_smaller->father = ptr->father;
     }
     else
     {
-        if (ptr->father != nullptr && is_bigger(ptr->father->data, ptr->data))
+        if (ptr->father && is_bigger(ptr->father->data, ptr->data))
             ptr->father->son_smaller = ptr->son_larger;
-        else  if (ptr->father != nullptr)
+        else  if (ptr->father)
             ptr->father->son_larger = ptr->son_larger;
         ptr->son_larger->father = ptr->father;
     }
@@ -385,7 +385,7 @@ void AVL_Tree<T, Cond>::remove_half_leaf (Node<T, Cond>* ptr)
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::fix_height (Node<T, Cond>* node)
 {
-    while (node != nullptr && node->height != height(node))
+    while (node && node->height != height(node))
     {
         node->height = height(node);
         node = fix_balance(node);
@@ -403,7 +403,7 @@ template<class T, class Cond>
 void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node, int* const output)
 {
     static int i = 0;
-    if (node == nullptr)
+    if (!node)
         return;
     inorder_print(node->son_smaller, output);
     output[i++] = node->data;
@@ -420,7 +420,7 @@ template<class T, class Cond>
 void AVL_Tree<T, Cond>::inorder_knockout (Node<T, Cond>* node, int* const output, int min, int max)
 {
     static int i = 0;
-    if (node == nullptr)
+    if (!node)
         return;
     if (node->data > min)
         inorder_print(node->son_smaller, output);

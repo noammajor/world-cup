@@ -133,11 +133,15 @@ bool Player::PlayerGoalsOrder::operator() (const Player& p1,const Player& p2) co
     return false;
 }
 
- bool Player::PlayerIDOrder::operator()(const Player& p1,const Player& p2) const
+ bool Player::PlayerIDOrder::operator()(const Player& p1, const Player& p2) const
  {
-    return p1 > p2;
+    return p1.get_playerID() > p2.get_playerID();
  }
 
+bool Player::PlayerIDOrder::operator()(const Player& p1, int num) const
+{
+    return p1.get_playerID() > num;
+}
 
 
 
