@@ -1,8 +1,9 @@
-#ifndef MAIN_CPP_TEAM_H
-#define MAIN_CPP_TEAM_H
+#ifndef TEAM_H
+#define TEAM_H
 
 #include "AVL_tree.h"
 #include "Player.h"
+
 
 class Team
 {
@@ -75,4 +76,4 @@ public:
 };
 
 
-#endif //MAIN_CPP_TEAM_H
+#endif //TEAM_H

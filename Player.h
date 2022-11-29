@@ -1,3 +1,6 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #include <iostream>
 #include "Team.h"
 
@@ -17,7 +20,7 @@ class Player
 
 public:
 
-    Player(int playerId, int teamId, int gamesPlayed, int goals, int cards, bool goalKeeper, Team *team):
+    Player(int playerId, int teamId, int gamesPlayed, int goals, int cards, bool goalKeeper, Team* team):
             my_team(team), team_Id(teamId), player_id(playerId), games_played(gamesPlayed),  goals(goals), cards(cards),
             goalkeeper(goalKeeper), teamsGamesPlayed(team->get_games_played()),closest_bottom(nullptr),closest_top(nullptr) {}
 
@@ -67,7 +70,6 @@ public:
 
     void change_team (Team* team);
 
-
     template<class condition>
     bool order(const Player &p1, const condition con) const;
 
@@ -86,3 +88,6 @@ public:
     };
 
 };
+
+
+#endif //PLAYER_H

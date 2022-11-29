@@ -43,7 +43,8 @@ public:
 
     int bf(Node<T, Cond> *t);
 
-    Node<T, Cond>* search(int data);
+    template<class S>
+    Node<T, Cond>* search(const S& data);
 
     Node<T, Cond>* rotate_LL(Node<T, Cond>* t);
 
@@ -488,6 +489,7 @@ T& AVL_Tree<T, Cond>::get_higher() const
 {
     return higher_data->data;
 }
+
 template<class T, class Cond>
 bool AVL_Tree<T, Cond>::isSmallest(const Node<T,Cond>* t)
 {
@@ -498,6 +500,7 @@ bool AVL_Tree<T, Cond>::isSmallest(const Node<T,Cond>* t)
         return true;
     return false;
 }
+
 template<class T, class Cond>
 Node<T,Cond>* AVL_Tree<T, Cond>::set_closests_small(Node<T,Cond>* player) const
 {
@@ -526,6 +529,7 @@ Node<T,Cond>* AVL_Tree<T, Cond>::set_closests_small(Node<T,Cond>* player) const
         return temp->son_smaller;
     }
 }
+
 template<class T, class Cond>
 void AVL_Tree<T,Cond>::postorderDelete(Node<T,Cond>* p)
 {
@@ -535,6 +539,7 @@ void AVL_Tree<T,Cond>::postorderDelete(Node<T,Cond>* p)
     postorderDelete(p->son_larger);
     delete p;
 }
+
 template<class T, class Cond>
 AVL_Tree<T,Cond>::~AVL_Tree()
 {
