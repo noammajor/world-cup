@@ -30,7 +30,9 @@ public:
 
     AVL_Tree<T, Cond>(const AVL_Tree<T, Cond> &tree) = delete;
 
-    ~AVL_Tree() = default; //do after
+    ~AVL_Tree();//do after
+
+    void inorderDelete(Node<T, Cond>*);
 
     int height(Node<T, Cond> *t);
 
@@ -100,8 +102,8 @@ int AVL_Tree<T, Cond>::bf(Node<T, Cond> *t)
     return s_height - l_height;
 }
 
-template<class T, class Cond>
-Node<T, Cond>* AVL_Tree<T, Cond>::search(const int data)
+template<class T, class Cond, class S>
+Node<T, Cond>* AVL_Tree<T, Cond>::search(const S& data)
 {
     if (root == nullptr)
         return nullptr;
@@ -455,6 +457,95 @@ T& AVL_Tree<T, Cond>::get_higher() const
 {
     return higher_data->data;
 }
+template<class T, class Cond>
+bool AVL_Tree<T, Cond>::isSmallest(const Node<T,Cond>* t)
+{
+    Node<T,Cond>* temp = root;
+    while(temp!= nullptr)
+        temp=temp->son_smaller;
+    if(t==temp)
+        return true;
+    return false;
+}
+template<class T, class Cond>
+Node<T,Cond>* AVL_Tree<T, Cond>::set_closests_small(Node<T,Cond>* player) const
+{
+    Node<T, Cond>* temp = player;
+    if(isSmallest(temp))
+        return nullptr;
+    if(temp->son_smaller== nullptr)
+    {
+        if(temp==temp->father->son_smaller)
+        {
+            while(temp==temp->father->son_smaller)
+            {
+                temp=temp->father;
+            }
+            temp=temp->father;
+            return temp;
+        }
+        if(temp==temp->father->son_larger)
+        {
+                return temp->father;
+
+        }
+    }
+    if(temp->son_smaller!= nullptr && temp->son_larger!= nullptr)
+    {
+        return temp->son_smaller;
+    }
+}
+template<class T, class Cond>
+void AVL_Tree<T,Cond>::postorderDelete(Node<T,Cond>* p)
+{
+    if (p== nullptr)
+        return;
+    postorderDelete(p->son_smaller);
+    postorderDelete(p->son_larger);
+    delete p;
+}
+template<class T, class Cond>
+AVL_Tree<T,Cond>::~AVL_Tree()
+{
+    postorderDelete(root);
+}
+
+
+
+/*
+template<class T, class Cond>
+Node<T,Cond> AVL_Tree<T, Cond>::set_closests_large(int data)
+{
+    Node<T, Cond>* temp = search(data);
+    if(isLargest(temp))
+        return nullptr;
+    if(temp->son_larger== nullptr)
+    {
+        if(temp==temp->father->son_smaller)
+            return temp->father;
+        if(temp==temp->father->son_larger)
+        {
+            while(temp==temp->father->son_larger)
+            {
+                temp=temp->father;
+            }
+            temp=temp->father;
+            return temp;
+        }
+    }
+    if(temp->son_larger!= nullptr && temp->son_smaller!= nullptr)
+    {
+        return temp->son_larger;
+    }
+}
+*/
+
+
+
+
+
+
+
 
 class intBigger
 {

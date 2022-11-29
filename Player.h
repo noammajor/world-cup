@@ -11,12 +11,15 @@ class Player
     int cards;
     bool goalkeeper;
     int teamsGamesPlayed;
+    Player* closest_top;
+    Player* closest_bottom;
+
 
 public:
 
     Player(int playerId, int teamId, int gamesPlayed, int goals, int cards, bool goalKeeper, Team *team):
             my_team(team), team_Id(teamId), player_id(playerId), games_played(gamesPlayed),  goals(goals), cards(cards),
-            goalkeeper(goalKeeper), teamsGamesPlayed(team->get_games_played()) {}
+            goalkeeper(goalKeeper), teamsGamesPlayed(team->get_games_played()),closest_bottom(nullptr),closest_top(nullptr) {}
 
     Player(int playerID);
 
@@ -57,6 +60,9 @@ public:
     void add_cards(int cardsReceived);
 
     Team* get_team() const;
+
+    void set_closest_bottom(Player* p);
+    void set_lowest();
 
     template<class condition>
     bool order(const Player &p1, const condition con) const;

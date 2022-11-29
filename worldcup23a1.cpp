@@ -57,6 +57,8 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         return StatusType::INVALID_INPUT;
     try
     {
+        Node<Player*, Player::PlayerGoalsOrder>* temp1= nullptr;
+        Node<Player*, Player::PlayerGoalsOrder>* temp2= nullptr;
         Node<Team*, TeamIDOrder>* node = all_teams.search(teamId);
         if (node == nullptr || playersID.search(playerId))
             return StatusType::FAILURE;
@@ -64,6 +66,17 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         Player player(playerId, teamId, gamesPlayed, goals, cards, goalKeeper, team);
         playersID.insert_to_tree(&player);
         playersGoals.insert_to_tree(&player);
+        temp2=playersGoals.search(&player)
+        temp1=playersGoals.set_closests_small(temp2);
+        if(!(playersGoals.isSmallest(temp1))
+        {
+            player.set_closest_bottom(playersGoals.get_data(temp1));
+        }
+       else
+        {
+           player.set_lowest(playersGoals.get_data(temp1))
+        }
+
         if (all_teams.get_data(node)->is_legal())
         {
             if (team->get_num_players() == 11 || (team->get_num_goalkeepers() == 1 && goalKeeper))

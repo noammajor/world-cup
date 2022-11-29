@@ -2,8 +2,24 @@
 #include "Team.h"
 #include "Player.h"
 
-
-
+void set_closest_bottom(Player* p)
+{
+   this->closest_bottom=p;
+    if(p->closest_top== nullptr)
+    {
+        p->closest_top=this;
+        this->closest_top= nullptr;
+        return;
+    }
+    closest_top=p->closest_top;
+    p->closest_top->closest_bottom=this;
+    p->closest_top=this;
+}
+void set_lowest()
+{
+    this->closest_bottom= nullptr;
+    this->closest_top=this->father;
+}
 
 bool Player::operator >(const Player& p1) const
 {
