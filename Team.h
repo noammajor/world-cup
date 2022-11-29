@@ -56,6 +56,8 @@ public:
 
     AVL_Tree<Player*, Player::PlayerGoalsOrder>* get_players() const;
 
+    void match (int* table) const;
+
 
 };
 
@@ -64,10 +66,10 @@ class TeamIDOrder
 public:
     TeamIDOrder();
     ~TeamIDOrder();
-    bool operator()(const Team* t1,const Team* t2) const
-    {
-        return t1->get_ID() > t2->get_ID();
-    }
+    bool operator()(const Team* t1, const Team* t2) const;
+    bool operator()(const Team* t1, int num) const;
+    bool operator()(int num, const Team* t1) const;
+
 };
 
 

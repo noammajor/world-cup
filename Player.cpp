@@ -143,7 +143,10 @@ bool Player::PlayerIDOrder::operator()(const Player& p1, int num) const
     return p1.get_playerID() > num;
 }
 
-
+bool Player::PlayerIDOrder::operator()(int num, const Player& p1) const
+{
+    return num > p1.get_playerID();
+}
 
 
 

@@ -66,9 +66,9 @@ public:
 
     void inorder_print (Node<T, Cond>* node, int* const output);
 
-    void knockout_tree (int* const output, int min, int max);
+    int knockout_tree (int min, int max);
 
-    void inorder_knockout (Node<T, Cond>* node, int* const output, int min, int max);
+    void inorder_knockout (Node<T, Cond>* node, int* output, int min, int max);
 
     T& get_data(Node<T, Cond>* node) const;
 
@@ -108,9 +108,9 @@ Node<T, Cond>* AVL_Tree<T, Cond>::search(const int data)
     Node<T, Cond>* t= root;
     while(t != nullptr)
     {
-        if(t->data == data)
+        if(is_bigger(data, t->data))
         {
-            return t;
+            t = t->son_larger;
         }
         if(is_bigger(t->data, data))
         {
@@ -118,7 +118,7 @@ Node<T, Cond>* AVL_Tree<T, Cond>::search(const int data)
         }
         else
         {
-            t = t->son_larger;
+            return t;
         }
     }
     return nullptr;
@@ -411,28 +411,31 @@ void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node, int* const output)
 }
 
 template<class T, class Cond>
-void AVL_Tree<T, Cond>::knockout_tree (int* const output, int min, int max)
+int AVL_Tree<T, Cond>::knockout_tree (int min, int max)
 {
-    inorder_knockout(root, output, min, max);
+    int* table = new int[2];
+    table[0] = 0;
+    inorder_knockout(root, table, min, max);
+    return table[0];
 }
 
 template<class T, class Cond>
-void AVL_Tree<T, Cond>::inorder_knockout (Node<T, Cond>* node, int* const output, int min, int max)
+void AVL_Tree<T, Cond>::inorder_knockout (Node<T, Cond>* node, int* output, int min, int max)
 {
     static int i = 0;
     if (!node)
         return;
-    if (node->data > min)
-        inorder_print(node->son_smaller, output);
-    if (node->data > min && node->data < max)
+    if (is_bigger(node->data, min))
+        inorder_knockout(node->son_smaller, output, min, max);
+    if (is_bigger(node->data, min) && is_bigger(max, node->data))
     {
-        if (Cond (node->data, output[0]))
+        if (is_bigger(node->data, output[0]))
         {
-
+            node->data->match(output);
         }
     }
-    if(node->data < max)
-        inorder_print(node->son_larger, output);
+    if(is_bigger(max, node->data))
+        inorder_knockout(node->son_larger, output, min, max);
 }
 
 template<class T, class Cond>

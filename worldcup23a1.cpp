@@ -281,7 +281,11 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
 {
-	// TODO: Your code goes here
-	return 2;
+	if (minTeamId < 0 || maxTeamId < 0 || maxTeamId < minTeamId)
+        return output_t<int>(StatusType::INVALID_INPUT);
+    int winner = legel_teams.knockout_tree(minTeamId, maxTeamId);
+    if (winner == 0)
+        return output_t<int>(StatusType::FAILURE);
+    return output_t<int>(winner);
 }
 

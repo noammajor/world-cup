@@ -102,7 +102,35 @@ int Team::get_points() const
     return points;
 }
 
+void Team::match (int* table) const
+{
+    if (table[0] == 0)
+    {
+        table[0] = get_ID();
+        table[1] = tot_game_points();
+    }
+    else
+    {
+        table[1] += tot_game_points() + 3;
+        if (tot_game_points() > table[1])
+        {
+            table[0] = get_ID();
+        }
+    }
+}
 
+bool TeamIDOrder::operator()(const Team* t1, const Team* t2) const
+{
+    return t1->get_ID() > t2->get_ID();
+}
 
+bool TeamIDOrder::operator()(const Team* t1, int num) const
+{
+    return t1->get_ID() > num;
+}
 
+bool TeamIDOrder::operator()(int num, const Team* t1) const
+{
+    return num > t1->get_ID();
+}
 

@@ -72,6 +72,7 @@ public:
     {
         bool operator()(const Player& p1, const Player& p2) const;
         bool operator()(const Player& p1, int num) const;
+        bool operator()(int num, const Player& p1) const;
     };
 
 };
