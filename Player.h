@@ -58,6 +58,8 @@ public:
 
     Team* get_team() const;
 
+    void change_team (Team* team);
+
     template<class condition>
     bool order(const Player &p1, const condition con) const;
 
