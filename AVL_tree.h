@@ -77,8 +77,10 @@ public:
     template<class S>
     void print_tree (S* const output);
 
-    template<class S>
-    void inorder_print (Node<T, Cond>* node, S* const output);
+
+    void inorder_print (Node<T, Cond>* node,   int* const output);
+
+    void inorder_print (Node<T, Cond>* node,   T* const output);
 
     int knockout_tree (int min, int max);
 
@@ -92,7 +94,7 @@ public:
 
     T& get_higher() const;
 
-    bool isSmallest(const Node<T,Cond>* t);
+    bool isSmallest(const Node<T,Cond>* t) const;
 
     Node<T,Cond>* set_closests_small(Node<T,Cond>* player) const;
 
@@ -440,8 +442,17 @@ void AVL_Tree<T, Cond>::print_tree (S* const output)
 }
 
 template<class T, class Cond>
-template<class S>
-void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node, S* const output)
+void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node,  int* const output)
+{
+    static int i = 0;
+    if (!node)
+        return;
+    inorder_print(node->son_smaller, output);
+    output[i++] = node->data->get_playerID();
+    inorder_print(node->son_larger, output);
+}
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node,  T* const output)
 {
     static int i = 0;
     if (!node)
@@ -509,7 +520,7 @@ T& AVL_Tree<T, Cond>::get_higher() const
 }
 
 template<class T, class Cond>
-bool AVL_Tree<T, Cond>::isSmallest(const Node<T,Cond>* t)
+bool AVL_Tree<T, Cond>::isSmallest(const Node<T,Cond>* t) const
 {
     Node<T,Cond>* temp = root;
     while(temp!= nullptr)
@@ -563,8 +574,6 @@ AVL_Tree<T,Cond>::~AVL_Tree()
 {
     postorderDelete(root);
 }
-
-
 
 /*
 template<class T, class Cond>
