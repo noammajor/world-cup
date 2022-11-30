@@ -25,8 +25,6 @@ public:
 
     ~Team() = default; //do later
 
-    explicit operator int();
-
     int get_ID () const;
 
     void remove_player(int playerID);

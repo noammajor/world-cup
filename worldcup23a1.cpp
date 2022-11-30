@@ -64,18 +64,19 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         if (node == nullptr || playersID.search(playerId))
             return StatusType::FAILURE;
         Team* team = all_teams.get_data(node);
-        Player player(playerId, teamId, gamesPlayed, goals, cards, goalKeeper, team);
+        Player player(playerId, teamId, gamesPlayed, goals, cards, goalKeeper);
+        player.change_team(team);
         playersID.insert_to_tree(&player);
         playersGoals.insert_to_tree(&player);
-        temp2=playersGoals.search(&player)
+        temp2=playersGoals.search(&player);
         temp1=playersGoals.set_closests_small(temp2);
-        if(!(playersGoals.isSmallest(temp1))
+        if(!(playersGoals.isSmallest(temp1)))
         {
             player.set_closest_bottom(playersGoals.get_data(temp1));
         }
        else
         {
-           player.set_lowest(playersGoals.get_data(temp1))
+           player.set_lowest(playersGoals.get_data(temp1));
         }
 
         if (all_teams.get_data(node)->is_legal())
