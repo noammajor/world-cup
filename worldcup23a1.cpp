@@ -5,12 +5,11 @@
 
 world_cup_t::world_cup_t()
 {
-	// TODO: Your code goes here
 }
 
-world_cup_t::~world_cup_t()
+world_cup_t::~world_cup_t() = default;
 {
-	// TODO: Your code goes here
+
 }
 
 
@@ -288,8 +287,11 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
 	if (playerId <= 0 || teamId <= 0)
         return output_t<int>(StatusType::INVALID_INPUT);
-    Node<Team*,TeamIDOrder>* ptr = legel_teams.get_root();
-
+    Node<Team*,TeamIDOrder>* ptr = all_teams.search(teamId);
+    Node<Player*, Player::PlayerIDOrder>* ptr1= ptr->get_players()->search(playerId);
+    if(ptr1== nullptr)
+        return output_t<int>(StatusType::FAILURE);
+    return output_t<int>(ptr1->get_data_Node()->get_closest())
 }
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)

@@ -12,8 +12,13 @@ struct Node
     Node* son_larger;
     T data;
     int height;
+    T& get_data_Node() const;
 };
-
+template<class T, class Cond>
+T& Node::get_data_Node() const
+{
+    return data;
+}
 
 template<class T, class Cond>
 class AVL_Tree
@@ -77,6 +82,8 @@ public:
     Node<T, Cond>* get_root() const;
 
     T& get_higher() const;
+
+    Node<T,Cond>* set_closests_small(Node<T,Cond>* player) const
 
 };
 
