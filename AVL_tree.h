@@ -75,13 +75,13 @@ public:
 
     void fix_height (Node<T, Cond>* node);
 
-    template<class S>
-    void print_tree (S* const output);
+    void print_tree (int* const output);
 
+    void array_tree (T* const output);
 
-    void inorder_print (Node<T, Cond>* node,   int* const output);
+    void inorder_print (Node<T, Cond>* node, int* const output);
 
-    void inorder_print (Node<T, Cond>* node,   T* const output);
+    void inorder_array (Node<T, Cond>* node, T* const output);
 
     int knockout_tree (int min, int max);
 
@@ -437,10 +437,15 @@ void AVL_Tree<T, Cond>::fix_height (Node<T, Cond>* node)
 }
 
 template<class T, class Cond>
-template<class S>
-void AVL_Tree<T, Cond>::print_tree (S* const output)
+void AVL_Tree<T, Cond>::print_tree (int* const output)
 {
     inorder_print(root, output);
+}
+
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::array_tree (T* const output)
+{
+    inorder_array(root, output);
 }
 
 template<class T, class Cond>
@@ -454,14 +459,14 @@ void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node,  int* const output)
     inorder_print(node->son_larger, output);
 }
 template<class T, class Cond>
-void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node,  T* const output)
+void AVL_Tree<T, Cond>::inorder_array (Node<T, Cond>* node,  T* const output)
 {
     static int i = 0;
     if (!node)
         return;
-    inorder_print(node->son_smaller, output);
+    inorder_array(node->son_smaller, output);
     output[i++] = node->data;
-    inorder_print(node->son_larger, output);
+    inorder_array(node->son_larger, output);
 }
 
 template<class T, class Cond>
@@ -613,12 +618,11 @@ AVL_Tree<T, Cond>* AVL_Tree<T, Cond>::unite(AVL_Tree<T, Cond>* t2)
     Cond is_bigger;
     T* t1_data = new T[this->size];
     T* t2_data = new  T[t2->size];
-    this->print_tree(t1_data);
-    t2->print_tree(t2_data);
+    this->array_tree(t1_data);
+    t2->array_tree(t2_data);
     T* united_data = new T[this->size + t2->size];
     merge(united_data, t1_data, this->size, t2_data, t2->size);
     Node<T, Cond>* higher = (is_bigger(this->higher_data->data, t2->higher_data->data)? this->higher_data : t2->higher_data);
-
     AVL_Tree<T, Cond>* tree = new AVL_Tree<T, Cond>(create_tree(log(this->size + t2->size)), higher,this->size + t2->size);
     delete[] t1_data;
     delete[] t2_data;
