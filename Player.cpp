@@ -4,22 +4,22 @@
 
 void Player::set_closest_bottom(Player* p)
 {
-   this->closest_bottom=p;
-    if(p->closest_top== nullptr)
+   this->closest_bottom = p;
+    if(p->closest_top == nullptr)
     {
-        p->closest_top=this;
-        this->closest_top= nullptr;
+        p->closest_top = this;
+        this->closest_top = nullptr;
         return;
     }
-    closest_top=p->closest_top;
-    p->closest_top->closest_bottom=this;
-    p->closest_top=this;
+    closest_top = p->closest_top;
+    p->closest_top->closest_bottom = this;
+    p->closest_top = this;
 }
 
 void Player::set_lowest()
 {
-    this->closest_bottom= nullptr;
-    this->closest_top=this->father;
+    this->closest_bottom = nullptr;
+    this->closest_top = this->father;
 }
 
 int Player::get_closest() const
@@ -88,7 +88,7 @@ Team* Player::get_team() const
     return my_team;
 }
 
-void Player::change_team (Team* team)
+void Player::change_team (Team* team);
 {
     my_team = team;
     team_Id = team->get_ID();

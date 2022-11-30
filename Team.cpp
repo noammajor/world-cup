@@ -1,11 +1,6 @@
 #include "Team.h"
 #include "Player.h"
 
-Team:: operator int()
-{
-    return teamID;
-}
-
 int Team::get_num_players() const
 {
     return num_players;
