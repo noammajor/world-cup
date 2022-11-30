@@ -64,7 +64,8 @@ public:
 
     Node<T, Cond>* fix_balance (Node<T, Cond>* t);
 
-    bool remove (int num);
+    template<class S>
+    bool remove (S num);
 
     bool isLeaf (Node<T, Cond>* node);
 
@@ -323,7 +324,8 @@ Node<T, Cond>* AVL_Tree<T, Cond>::fix_balance (Node<T, Cond>* t)
 }
 
 template<class T, class Cond>
-bool AVL_Tree<T, Cond>::remove (int num)
+template<class S>
+bool AVL_Tree<T, Cond>::remove (S num)
 {
     Cond is_bigger;
     Node<T, Cond> *ptr = search(num);
@@ -533,12 +535,12 @@ bool AVL_Tree<T, Cond>::isSmallest(const Node<T,Cond>* t) const
 template<class T, class Cond>
 Node<T,Cond>* AVL_Tree<T, Cond>::set_closests_small(Node<T,Cond>* player) const
 {
-    Node<T, Cond>* temp = player;
-    if(isSmallest(temp))
+    if(isSmallest(player))
         return nullptr;
-    if(temp->son_smaller== nullptr)
+    Node<T, Cond>* temp = player;
+    if(temp->son_smaller == nullptr)
     {
-        if(temp==temp->father->son_smaller)
+        if(temp == temp->father->son_smaller)
         {
             while(temp==temp->father->son_smaller)
             {
@@ -547,16 +549,12 @@ Node<T,Cond>* AVL_Tree<T, Cond>::set_closests_small(Node<T,Cond>* player) const
             temp=temp->father;
             return temp;
         }
-        if(temp==temp->father->son_larger)
+        if(temp == temp->father->son_larger)
         {
                 return temp->father;
-
         }
     }
-    if(temp->son_smaller!= nullptr && temp->son_larger!= nullptr)
-    {
-        return temp->son_smaller;
-    }
+    return temp->son_smaller;
 }
 
 template<class T, class Cond>
