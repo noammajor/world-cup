@@ -84,7 +84,7 @@ public:
     class PlayerGoalsOrder
     {
     public:
-        bool operator() (const Player& p1,const Player& p2) const;
+        bool operator() (const Player* p1,const Player* p2) const;
     };
 
     class PlayerIDOrder

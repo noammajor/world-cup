@@ -168,21 +168,21 @@ bool Player::order(const Player& p1,const Condition con) const
 
 
 
-bool Player::PlayerGoalsOrder::operator() (const Player& p1,const Player& p2) const
+bool Player::PlayerGoalsOrder::operator() (const Player* p1,const Player* p2) const
 {
-    if(p1.goals > p2.goals)
+    if(p1->goals > p2->goals)
     {
         return true;
     }
-    else if(p1 == p2)
+    else if(p1->goals == p2->goals)
     {
-        if (p1.cards > p2.cards)
+        if (p1->cards > p2->cards)
         {
             return true;
         }
-        else if (p1.cards == p2.cards)
+        else if (p1->cards == p2->cards)
         {
-            if (p1.player_id > p2.player_id)
+            if (p1->player_id > p2->player_id)
             {
                 return true;
             }

@@ -48,7 +48,7 @@ public:
     int bf(Node<T, Cond> *t);
 
     template<class S>
-    Node<T, Cond>* search(const S data);
+    Node<T, Cond>* search(const S& data);
 
     Node<T, Cond>* rotate_LL(Node<T, Cond>* t);
 
@@ -133,7 +133,7 @@ int AVL_Tree<T, Cond>::bf(Node<T, Cond> *t)
 
 template<class T, class Cond>
 template<class S>
-Node<T, Cond>* AVL_Tree<T, Cond>::search(const S data)
+Node<T, Cond>* AVL_Tree<T, Cond>::search(const S& data)
 {
     Cond is_bigger;
     if (root == nullptr)
