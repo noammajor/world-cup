@@ -477,7 +477,6 @@ template<class T, class Cond>
 void AVL_Tree<T, Cond>::inorder_knockout (Node<T, Cond>* node, int* output, int min, int max)
 {
     Cond is_bigger;
-    static int i = 0;
     if (!node)
         return;
     if (is_bigger(node->data, min))

@@ -13,4 +13,5 @@ add_executable(world_cup
         Team.h
         worldcup23a1.cpp
         worldcup23a1.h
+        wet1util.h
         main23a1.cpp)

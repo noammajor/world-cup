@@ -242,8 +242,7 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
         if(node_team)
             return output_t<int>(all_teams.get_data(node_team)->get_num_players());
     }
-    else
-        return output_t<int>(num_players);
+    return output_t<int>(num_players);
 }
 
 StatusType world_cup_t::get_all_players(int teamId, int *const output)
