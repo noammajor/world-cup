@@ -656,6 +656,7 @@ Node<T, Cond>* AVL_Tree<T, Cond>::create_tree(int height)
     return node;
 }
 
+
 class intBigger
 {
 public:
