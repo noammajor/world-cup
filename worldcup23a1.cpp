@@ -104,13 +104,13 @@ StatusType world_cup_t::remove_player(int playerId)
         if (!team->is_legal() && (team->get_num_players() == 10 ||
                             (team->get_num_goalkeepers() == 0 && player_to_remove->is_goalkeeper())))
             legel_teams.remove(team->get_ID());
+        playersID.remove(playerId);
+        playersGoals.remove(player_to_remove);
     }
     catch (std::bad_alloc&)
     {
         return StatusType::ALLOCATION_ERROR;
     }
-    playersID.remove(playerId);
-    playersGoals.remove(playerId);
     num_players--;
     return StatusType::SUCCESS;
 }
