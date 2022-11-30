@@ -28,7 +28,7 @@ public:
 
     Player(int playerId, int teamId, int gamesPlayed, int goals, int cards, bool goalKeeper):
             my_team(nullptr), team_Id(teamId), player_id(playerId), games_played(gamesPlayed),  goals(goals), cards(cards),
-            goalkeeper(goalKeeper), teamsGamesPlayed(0),closest_bottom(nullptr),closest_top(nullptr) {}
+            goalkeeper(goalKeeper), teamsGamesPlayed(0), closest_top(nullptr), closest_bottom(nullptr) {}
 
     Player(int playerID);
 
