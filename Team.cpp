@@ -1,5 +1,5 @@
 #include "Team.h"
-#include "Player.h"
+
 
 int Team::get_num_players() const
 {
@@ -121,6 +121,7 @@ Team* Team::new_united_team (Team* t1, int newTeamID)
     new_team.num_goalkeepers = this->num_goalkeepers + t1->num_goalkeepers;
     new_team.tot_goals_cards = this->tot_goals_cards + t1->tot_goals_cards;
     new_team.players = this->players->unite(t1->players);
+
     this->num_players = 0;
     t1->num_players = 0;
     return &new_team;

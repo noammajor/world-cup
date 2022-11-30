@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Team.h"
+#include "AVL_tree.h"
 
 class Team;
 
@@ -21,6 +22,9 @@ class Player
 
 
 public:
+
+    class PlayerGoalsOrder;
+    class PlayerIDOrder;
 
     Player(int playerId, int teamId, int gamesPlayed, int goals, int cards, bool goalKeeper):
             my_team(nullptr), team_Id(teamId), player_id(playerId), games_played(gamesPlayed),  goals(goals), cards(cards),
@@ -68,18 +72,17 @@ public:
 
     void set_closest_bottom(Player* p);
 
-    void set_lowest();
+    void set_lowest(Node<Player*, Player::PlayerGoalsOrder>* node);
+
     int get_closest() const;
 
     void change_team (Team* team);
 
-    template<class condition>
-    bool order(const Player &p1, const condition con) const;
+    template<class Condition>
+    bool order(const Player &p1, const Condition con) const;
 
     class PlayerGoalsOrder
     {
-        PlayerGoalsOrder();
-        ~PlayerGoalsOrder();
         bool operator() (const Player& p1,const Player& p2) const;
     };
 

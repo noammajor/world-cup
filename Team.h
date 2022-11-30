@@ -13,7 +13,7 @@ class Team
     int num_goalkeepers;
     int tot_goals_cards;
     int games_played;
-    AVL_Tree<Player*, Player::PlayerGoalsOrder> *players;
+    AVL_Tree<Player*, Player::PlayerGoalsOrder>* players;
 
 public:
     Team(int ID, int points): teamID(ID), points(points), num_players(0), num_goalkeepers(0),
@@ -65,8 +65,6 @@ public:
 class TeamIDOrder
 {
 public:
-    TeamIDOrder();
-    ~TeamIDOrder();
     bool operator()(const Team* t1, const Team* t2) const;
     bool operator()(const Team* t1, int num) const;
     bool operator()(int num, const Team* t1) const;

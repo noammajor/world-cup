@@ -8,9 +8,6 @@ world_cup_t::world_cup_t()
 }
 
 world_cup_t::~world_cup_t() = default;
-{
-
-}
 
 
 StatusType world_cup_t::add_team(int teamId, int points)
@@ -57,8 +54,6 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         return StatusType::INVALID_INPUT;
     try
     {
-        Node<Player*, Player::PlayerGoalsOrder>* temp1= nullptr;
-        Node<Player*, Player::PlayerGoalsOrder>* temp2= nullptr;
         Node<Team*, TeamIDOrder>* node = all_teams.search(teamId);
         if (node == nullptr || playersID.search(playerId))
             return StatusType::FAILURE;
@@ -67,8 +62,8 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         player.change_team(team);
         playersID.insert_to_tree(&player);
         playersGoals.insert_to_tree(&player);
-        temp2=playersGoals.search(&player);
-        temp1=playersGoals.set_closests_small(temp2);
+        Node<Player*, Player::PlayerGoalsOrder>* temp2 = playersGoals.search(&player);
+        Node<Player*, Player::PlayerGoalsOrder>* temp1 = playersGoals.set_closests_small(temp2);
         if(!(playersGoals.isSmallest(temp1)))
         {
             player.set_closest_bottom(playersGoals.get_data(temp1));
@@ -293,10 +288,10 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 	if (playerId <= 0 || teamId <= 0)
         return output_t<int>(StatusType::INVALID_INPUT);
     Node<Team*,TeamIDOrder>* ptr = all_teams.search(teamId);
-    Node<Player*, Player::PlayerIDOrder>* ptr1= ptr->get_players()->search(playerId);
+    Node<Player*, Player::PlayerIDOrder>* ptr1= ptr->get_data_Node()->get_players()->search(playerId);
     if(ptr1== nullptr)
         return output_t<int>(StatusType::FAILURE);
-    return output_t<int>(ptr1->get_data_Node()->get_closest())
+    return output_t<int>(ptr1->get_data_Node()->get_closest());
 }
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)

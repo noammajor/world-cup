@@ -16,10 +16,10 @@ void Player::set_closest_bottom(Player* p)
     p->closest_top = this;
 }
 
-void Player::set_lowest()
+void Player::set_lowest(Node<Player*, Player::PlayerGoalsOrder>* node)
 {
     this->closest_bottom = nullptr;
-    this->closest_top = this->father;
+    this->closest_top = node->get_data_Node();
 }
 
 int Player::get_closest() const
@@ -88,7 +88,7 @@ Team* Player::get_team() const
     return my_team;
 }
 
-void Player::change_team (Team* team);
+void Player::change_team (Team* team)
 {
     my_team = team;
     team_Id = team->get_ID();
@@ -155,8 +155,8 @@ int Player::get_team_games() const
     return teamsGamesPlayed;
 }
 
-template<class condition>
-bool Player::order(const Player& p1,const condition con) const
+template<class Condition>
+bool Player::order(const Player& p1,const Condition con) const
 {
     if(con(*this,p1))
     {

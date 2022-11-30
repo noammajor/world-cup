@@ -16,11 +16,7 @@ struct Node
     int height;
     T& get_data_Node() const;
 };
-template<class T, class Cond>
-T& Node::get_data_Node() const
-{
-    return data;
-}
+
 
 template<class T, class Cond>
 class AVL_Tree
@@ -40,6 +36,8 @@ public:
     AVL_Tree<T, Cond>(const AVL_Tree<T, Cond> &tree) = delete;
 
     ~AVL_Tree();//do after
+
+    AVL_Tree<T, Cond>* unite(AVL_Tree<T, Cond>* t2);
 
     void inorderDelete(Node<T, Cond>*);
 
@@ -90,9 +88,11 @@ public:
 
     T& get_higher() const;
 
+    bool isSmallest(const Node<T,Cond>* t);
+
     Node<T,Cond>* set_closests_small(Node<T,Cond>* player) const
 
-    AVL_Tree<T, Cond>* unite(AVL_Tree<T, Cond>* t2);
+
 
     void merge (T* united, T* t1, int t1_size, T* t2, int t2_size);
 
@@ -100,6 +100,11 @@ public:
 
 };
 
+template<class T, class Cond>
+T& Node::get_data_Node() const
+{
+    return data;
+}
 
 template<class T, class Cond>
 int AVL_Tree<T, Cond>::height(Node<T, Cond>* t)
@@ -600,7 +605,13 @@ AVL_Tree<T, Cond>* AVL_Tree<T, Cond>::unite(AVL_Tree<T, Cond>* t2)
     T* united_data = new T[this->data + t2->data];
     merge(united_data, t1_data, this->size, t2_data, t2->size);
     Node<T, Cond>* higher = (is_bigger(this->higher_data->data, t2->higher_data->data)? this->higher_data : t2->higher_data);
-    return AVL_Tree<T, Cond>(create_tree(log(this->size + t2->size)), higher,this->size + t2->size);
+
+    AVL_Tree<T, Cond> tree = new AVL_Tree<T, Cond>(create_tree(log(this->size + t2->size)), higher,this->size + t2->size);
+    AVL_Tree<T, Cond>* ptr = &tree;
+    delete[] t1_data;
+    delete[] t2_data;
+    delete[] united_data;
+    return ptr;
 }
 
 template<class T, class Cond>
