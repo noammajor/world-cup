@@ -1,6 +1,8 @@
 #ifndef AVL_TREE_H
 #define AVL_TREE_H
 
+#include "Team.h"
+
 using namespace std;
 
 
@@ -24,12 +26,14 @@ template<class T, class Cond>
 class AVL_Tree
 {
 
-    Node<T, Cond>*  root;
-    Cond is_bigger;
+    Node<T, Cond>* root;
     Node<T, Cond>* higher_data;
+    int size;
 
 public:
-    AVL_Tree(): root(nullptr), higher_data(nullptr) {}
+    AVL_Tree(): root(nullptr), higher_data(nullptr), size(0) {}
+
+    AVL_Tree(Node<T, Cond>*  root, Node<T, Cond>* higher_data, int size): root(root), higher_data(higher_data), size(size){}
 
     AVL_Tree<T, Cond> &operator=(const AVL_Tree<T, Cond> &tree) = delete;
 
@@ -77,6 +81,8 @@ public:
 
     void inorder_knockout (Node<T, Cond>* node, int* output, int min, int max);
 
+    void inorder_change (Node<T, Cond>* node, Team* team);
+
     T& get_data(Node<T, Cond>* node) const;
 
     Node<T, Cond>* get_root() const;
@@ -84,6 +90,12 @@ public:
     T& get_higher() const;
 
     Node<T,Cond>* set_closests_small(Node<T,Cond>* player) const
+
+    AVL_Tree<T, Cond>* unite(AVL_Tree<T, Cond>* t2);
+
+    void merge (T* united, T* t1, int t1_size, T* t2, int t2_size);
+
+    Node<T, Cond>* create_tree(int height);
 
 };
 
@@ -112,6 +124,7 @@ int AVL_Tree<T, Cond>::bf(Node<T, Cond> *t)
 template<class T, class Cond, class S>
 Node<T, Cond>* AVL_Tree<T, Cond>::search(const S& data)
 {
+    Cond is_bigger;
     if (root == nullptr)
         return nullptr;
     Node<T, Cond>* t= root;
@@ -218,6 +231,7 @@ bool AVL_Tree<T, Cond>::insert_to_tree(const T& data)
     if (ptr != nullptr)
     {
         root = ptr;
+        size++;
         return true;
     }
     return false;
@@ -226,6 +240,7 @@ bool AVL_Tree<T, Cond>::insert_to_tree(const T& data)
 template<class T, class Cond>
 Node<T, Cond>* AVL_Tree<T, Cond>::insert(Node<T, Cond>* t,const T& data)
 {
+    Cond is_bigger;
     if (t == nullptr)
     {
         try
@@ -297,6 +312,7 @@ Node<T, Cond>* AVL_Tree<T, Cond>::fix_balance (Node<T, Cond>* t)
 template<class T, class Cond>
 bool AVL_Tree<T, Cond>::remove (int num)
 {
+    Cond is_bigger;
     Node<T, Cond> *ptr = search(num);
     if (ptr == nullptr)
         return false;
@@ -351,6 +367,7 @@ bool AVL_Tree<T, Cond>::remove (int num)
         }
     }
     fix_height(ptr_father);
+    size--;
     return true;
 }
 
@@ -364,6 +381,7 @@ bool AVL_Tree<T, Cond>::isLeaf (Node<T, Cond>* node)
 
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::remove_leaf (Node<T, Cond>* ptr) {
+    Cond is_bigger;
     if (is_bigger(ptr->father->data, ptr->data))
         ptr->father->son_smaller = nullptr;
     else
@@ -373,6 +391,7 @@ void AVL_Tree<T, Cond>::remove_leaf (Node<T, Cond>* ptr) {
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::remove_half_leaf (Node<T, Cond>* ptr)
 {
+    Cond is_bigger;
     if (!ptr->son_larger)
     {
         if (ptr->father && is_bigger(ptr->father->data, ptr->data))
@@ -431,6 +450,7 @@ int AVL_Tree<T, Cond>::knockout_tree (int min, int max)
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::inorder_knockout (Node<T, Cond>* node, int* output, int min, int max)
 {
+    Cond is_bigger;
     static int i = 0;
     if (!node)
         return;
@@ -445,6 +465,16 @@ void AVL_Tree<T, Cond>::inorder_knockout (Node<T, Cond>* node, int* output, int 
     }
     if(is_bigger(max, node->data))
         inorder_knockout(node->son_larger, output, min, max);
+}
+
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::inorder_change (Node<T, Cond>* node, Team* team)
+{
+    if (!node)
+        return;
+    inorder_change(node->son_smaller, team);
+    node->data->change_team(team);
+    inorder_change(node->son_larger, team);
 }
 
 template<class T, class Cond>
@@ -553,6 +583,46 @@ Node<T,Cond> AVL_Tree<T, Cond>::set_closests_large(int data)
 
 
 
+
+template<class T, class Cond>
+AVL_Tree<T, Cond>* AVL_Tree<T, Cond>::unite(AVL_Tree<T, Cond>* t2)
+{
+    Cond is_bigger;
+    T* t1_data = new T[this->size];
+    T* t2_data = new  T[t2->size];
+    this->print_tree(t1_data);
+    t2->print_tree(t2_data);
+    T* united_data = new T[this->data + t2->data];
+    merge(united_data, t1_data, this->size, t2_data, t2->size);
+    Node<T, Cond>* higher = (is_bigger(this->higher_data->data, t2->higher_data->data)? this->higher_data : t2->higher_data);
+    return AVL_Tree<T, Cond>(create_tree(log(this->size + t2->size)), higher,this->size + t2->size);
+}
+
+template<class T, class Cond>
+void AVL_Tree<T, Cond>::merge (T* united, T* t1, int t1_size, T* t2, int t2_size)
+{
+    Cond is_bigger;
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    while (i < t1_size && j < t2_size)
+        is_bigger(t1[i], t2[j]) ? united[k++] = t1[i++] : united[k++] = t2[j++];
+    while (i  < t1_size)
+        united[k++] =t1[i++];
+    while (j < t2_size)
+        united[k++] =  t2[j++];
+}
+
+template<class T, class Cond>
+Node<T, Cond>* AVL_Tree<T, Cond>::create_tree(int height)
+{
+    if (height == 0)
+        return nullptr;
+    Node<T, Cond>* node = new Node<T, Cond>;
+    node->son_larger = create_tree(height - 1);
+    node->son_smaller = create_tree(height - 1);
+    return node;
+}
 
 class intBigger
 {

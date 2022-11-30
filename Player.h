@@ -62,8 +62,13 @@ public:
     Team* get_team() const;
 
     void set_closest_bottom(Player* p);
+
     void set_lowest();
     int get_closest() const;
+
+    void change_team (Team* team);
+
+
     template<class condition>
     bool order(const Player &p1, const condition con) const;
 

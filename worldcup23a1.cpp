@@ -37,7 +37,8 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::INVALID_INPUT;
     Team* team = all_teams.get_data(all_teams.search(teamId));
     if (team && team->get_num_players() == 0) {
-        try {
+        try
+        {
             all_teams.remove(teamId);
         }
         catch (std::bad_alloc&) {
@@ -204,10 +205,13 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         return StatusType::FAILURE;
     Team* team1 = all_teams.get_data(node_team1);
     Team* team2 = all_teams.get_data(node_team2);
-    Team* newTeam = new Team(newTeamId, team1->get_points() + team2->get_points());
-
-
-	return StatusType::SUCCESS;
+    Team* newTeam = team1->new_united_team(team2, newTeamId);
+    all_teams.insert_to_tree(newTeam);
+    if (newTeam->is_legal())
+        legel_teams.insert_to_tree(newTeam);
+    remove_team(team1->get_ID());
+    remove_team(team2->get_ID());
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_top_scorer(int teamId)

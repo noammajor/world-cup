@@ -86,6 +86,13 @@ Team* Player::get_team() const
     return my_team;
 }
 
+void Player::change_team (Team* team)
+{
+    my_team = team;
+    team_Id = team->get_ID();
+    teamsGamesPlayed = 0;
+}
+
 bool Player::operator ==(const Player& p1) const
 {
     if (this->player_id == p1.player_id)

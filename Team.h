@@ -58,6 +58,8 @@ public:
 
     void match (int* table) const;
 
+    Team* new_united_team (Team* t1, int newTeamID);
+
 
 };
 
