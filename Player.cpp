@@ -16,10 +16,10 @@ void Player::set_closest_bottom(Player* p)
     p->closest_top = this;
 }
 
-void Player::set_lowest(Node<Player*, Player::PlayerGoalsOrder>* node)
+void Player::set_lowest(Player* lowest_player)
 {
     this->closest_bottom = nullptr;
-    this->closest_top = node->get_data_Node();
+    this->closest_top = lowest_player;
 }
 
 int Player::get_closest() const
@@ -191,19 +191,19 @@ bool Player::PlayerGoalsOrder::operator() (const Player& p1,const Player& p2) co
     return false;
 }
 
- bool Player::PlayerIDOrder::operator()(const Player& p1, const Player& p2) const
+ bool Player::PlayerIDOrder::operator()(const Player* p1, const Player* p2) const
  {
-    return p1.get_playerID() > p2.get_playerID();
+    return p1->get_playerID() > p2->get_playerID();
  }
 
-bool Player::PlayerIDOrder::operator()(const Player& p1, int num) const
+bool Player::PlayerIDOrder::operator()(const Player* p1, int num) const
 {
-    return p1.get_playerID() > num;
+    return p1->get_playerID() > num;
 }
 
-bool Player::PlayerIDOrder::operator()(int num, const Player& p1) const
+bool Player::PlayerIDOrder::operator()(int num, const Player* p1) const
 {
-    return num > p1.get_playerID();
+    return num > p1->get_playerID();
 }
 
 

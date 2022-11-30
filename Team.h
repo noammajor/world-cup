@@ -4,6 +4,8 @@
 #include "AVL_tree.h"
 #include "Player.h"
 
+template<class T, class Cond>
+class AVL_Tree;
 
 class Team
 {
@@ -13,7 +15,7 @@ class Team
     int num_goalkeepers;
     int tot_goals_cards;
     int games_played;
-    AVL_Tree<Player*, Player::PlayerGoalsOrder>* players;
+    AVL_Tree<Player*, Player::PlayerIDOrder>* players;
 
 public:
     Team(int ID, int points): teamID(ID), points(points), num_players(0), num_goalkeepers(0),
@@ -53,7 +55,7 @@ public:
 
     Player* get_top_player() const;
 
-    AVL_Tree<Player*, Player::PlayerGoalsOrder>* get_players() const;
+    AVL_Tree<Player*, Player::PlayerIDOrder>* get_players() const;
 
     void match (int* table) const;
 

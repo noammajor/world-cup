@@ -72,7 +72,7 @@ public:
 
     void set_closest_bottom(Player* p);
 
-    void set_lowest(Node<Player*, Player::PlayerGoalsOrder>* node);
+    void set_lowest(Player* lowest_player);
 
     int get_closest() const;
 
@@ -83,14 +83,16 @@ public:
 
     class PlayerGoalsOrder
     {
+    public:
         bool operator() (const Player& p1,const Player& p2) const;
     };
 
     class PlayerIDOrder
     {
-        bool operator()(const Player& p1, const Player& p2) const;
-        bool operator()(const Player& p1, int num) const;
-        bool operator()(int num, const Player& p1) const;
+    public:
+        bool operator()(const Player* p1, const Player* p2) const;
+        bool operator()(const Player* p1, int num) const;
+        bool operator()(int num, const Player* p1) const;
     };
 
 };
