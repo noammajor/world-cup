@@ -13,3 +13,6 @@
 .CMakeLists.txt
 
 .idea/module.xml
+.a.out
+.test.in
+.test.out
