@@ -244,7 +244,7 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
     }
     return output_t<int>(num_players);
 }
-
+/*
 StatusType world_cup_t::get_all_players(int teamId, int *const output)
 {
 	if (teamId == 0 || !output)
@@ -280,7 +280,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
         }
     }
 	return StatusType::SUCCESS;
-}
+}*/
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {

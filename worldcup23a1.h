@@ -60,7 +60,7 @@ public:
 	
 	output_t<int> get_all_players_count(int teamId);
 	
-	StatusType get_all_players(int teamId, int *const output);
+//	StatusType get_all_players(int teamId, int *const output);
 	
 	output_t<int> get_closest_player(int playerId, int teamId);
 	

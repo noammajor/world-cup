@@ -75,11 +75,11 @@ public:
 
     void fix_height (Node<T, Cond>* node);
 
-    void print_tree (int* const output);
+    //void print_tree (int* const output);
 
     void array_tree (T* const output);
 
-    void inorder_print (Node<T, Cond>* node, int* const output);
+    //void inorder_print (Node<T, Cond>* node, int* const output);
 
     void inorder_array (Node<T, Cond>* node, T* const output);
 
@@ -99,11 +99,11 @@ public:
 
     Node<T,Cond>* set_closests_small(Node<T,Cond>* player) const;
 
-
-
     void merge (T* united, T* t1, int t1_size, T* t2, int t2_size);
 
     Node<T, Cond>* create_tree(int height);
+
+    int get_size() const;
 
 };
 
@@ -111,6 +111,12 @@ template<class T, class Cond>
 T& Node<T, Cond>::get_data_Node()
 {
     return data;
+}
+
+template<class T, class Cond>
+int AVL_Tree<T, Cond>::get_size() const
+{
+    return size;
 }
 
 template<class T, class Cond>
@@ -148,7 +154,7 @@ Node<T, Cond>* AVL_Tree<T, Cond>::search(const S& data)
         {
             t = t->son_larger;
         }
-        if(is_bigger(t->data, data))
+        else if(is_bigger(t->data, data))
         {
             t = t->son_smaller;
         }
@@ -263,6 +269,7 @@ Node<T, Cond>* AVL_Tree<T, Cond>::insert(Node<T, Cond>* t,const T& data)
             base->data = data;
             base->son_larger = nullptr;
             base->son_smaller = nullptr;
+            base->father = nullptr;
             base->height = 0;
             if (!root)
                 higher_data = base;
@@ -336,7 +343,8 @@ bool AVL_Tree<T, Cond>::remove (S num)
     {
         remove_leaf(ptr);
     }
-    else if (!ptr->son_larger || !ptr->son_smaller) {
+    else if (!ptr->son_larger || !ptr->son_smaller)
+    {
         remove_half_leaf(ptr);
     }
     else
@@ -350,34 +358,34 @@ bool AVL_Tree<T, Cond>::remove (S num)
             else if (ptr->father)
                 ptr->father->son_larger = temp1;
             temp1->father = ptr->father;
-            ptr->father = temp1;
-            ptr->son_larger = temp1->son_larger;
+            temp1->son_smaller = ptr->son_smaller;
+            ptr->son_smaller->father = temp1;
+            delete ptr;
         }
         else
         {
             while (temp2->son_smaller)
                 temp2 = temp2->son_smaller;
-            ptr->son_larger = temp2->son_larger;
+            temp2->father->son_smaller = temp2->son_larger;
             if (temp2->son_larger)
-                temp2->son_larger->father = ptr;
+                temp2->son_larger->father = temp2->father;
             temp2->son_larger = temp1;
             temp1->father = temp2;
-            temp1 = temp2->father;
+            temp1 = temp2->father; //using the  same pointer for bf
             temp2->father = ptr->father;
             if (ptr->father && is_bigger(ptr->father->data, ptr->data))
                 ptr->father->son_smaller = temp2;
             else if (ptr->father)
                 ptr->father->son_larger = temp2;
-            ptr->father = temp1;
-            temp1->son_smaller = ptr;
-            if (isLeaf(ptr))
-                remove_leaf(ptr);
-            else
-                remove_half_leaf(ptr);
-            while (temp2->father)
+            if (ptr->son_smaller)
             {
-                temp2 = fix_balance(temp2);
-                temp2 = temp2->father;
+                temp2->son_smaller = ptr->son_smaller;
+                ptr->son_smaller->father = temp2;
+            }
+            while (temp1->father)
+            {
+                temp1 = fix_balance(temp1);
+                temp1 = temp1->father;
             }
         }
     }
@@ -397,10 +405,18 @@ bool AVL_Tree<T, Cond>::isLeaf (Node<T, Cond>* node)
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::remove_leaf (Node<T, Cond>* ptr) {
     Cond is_bigger;
-    if (is_bigger(ptr->father->data, ptr->data))
-        ptr->father->son_smaller = nullptr;
+    if (ptr->father)
+    {
+        if (is_bigger(ptr->father->data, ptr->data))
+            ptr->father->son_smaller = nullptr;
+        else
+            ptr->father->son_larger = nullptr;
+    }
     else
-        ptr->father->son_larger = nullptr;
+    {
+       root = nullptr;
+    }
+    delete ptr;
 }
 
 template<class T, class Cond>
@@ -414,6 +430,8 @@ void AVL_Tree<T, Cond>::remove_half_leaf (Node<T, Cond>* ptr)
         else if (ptr->father)
             ptr->father->son_larger = ptr->son_smaller;
         ptr->son_smaller->father = ptr->father;
+        if (!ptr->son_smaller->father)
+            root = ptr->son_smaller->father;
     }
     else
     {
@@ -422,7 +440,10 @@ void AVL_Tree<T, Cond>::remove_half_leaf (Node<T, Cond>* ptr)
         else  if (ptr->father)
             ptr->father->son_larger = ptr->son_larger;
         ptr->son_larger->father = ptr->father;
+        if (!ptr->son_larger->father)
+            root = ptr->son_larger->father;
     }
+    delete ptr;
 }
 
 template<class T, class Cond>
@@ -435,19 +456,19 @@ void AVL_Tree<T, Cond>::fix_height (Node<T, Cond>* node)
         node = node->father;
     }
 }
-
+/*
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::print_tree (int* const output)
 {
     inorder_print(root, output);
-}
+}*/
 
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::array_tree (T* const output)
 {
     inorder_array(root, output);
 }
-
+/*
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node,  int* const output)
 {
@@ -457,7 +478,8 @@ void AVL_Tree<T, Cond>::inorder_print (Node<T, Cond>* node,  int* const output)
     inorder_print(node->son_smaller, output);
     output[i++] = node->data->get_playerID();
     inorder_print(node->son_larger, output);
-}
+}*/
+
 template<class T, class Cond>
 void AVL_Tree<T, Cond>::inorder_array (Node<T, Cond>* node,  T* const output)
 {
